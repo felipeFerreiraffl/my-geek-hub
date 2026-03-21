@@ -14,3 +14,5 @@ const createLogger = (prefix: string) => ({
 
 export const logger = createLogger("INFO");
 export const authLogger = createLogger("AUTH");
+export const databaseLogger = createLogger("DB");
+export const proxyLogger = createLogger("PROXY");
