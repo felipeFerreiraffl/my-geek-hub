@@ -6,7 +6,11 @@
     "dev": "node --watch --env-file=.env --import tsx src/index.ts",
     "build": "tsc",
     "start": "node --watch --env-file=.env dist/index.js",
-    "test": "node --test --env-file=.env **/*.test.ts"
+    "test": "node --test --env-file=.env **/*.test.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
   },
   "type": "module",
   "devDependencies": {
