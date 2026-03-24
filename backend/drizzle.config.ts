@@ -12,7 +12,7 @@ export default defineConfig({
   dialect: "postgresql",
   dbCredentials: {
     host: DATABASE_HOST,
-    database: DATABASE_URL,
+    url: DATABASE_URL,
     user: DATABASE_USER,
     password: DATABASE_PASSWORD,
   },

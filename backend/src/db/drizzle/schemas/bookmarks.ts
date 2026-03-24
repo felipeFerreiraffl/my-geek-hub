@@ -6,7 +6,6 @@ import {
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
-import { id } from "zod/locales";
 import { users } from "./users.js";
 
 export const mediaTypeEnum = pgEnum("media_type", ["ANIME", "MANGA", "GAME"]);
@@ -28,7 +27,7 @@ export const bookmarks = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    externalId: text("user_id").notNull(),
+    externalId: text("external_id").notNull(),
     title: text("title").notNull(),
     imageUrl: text("image_url"),
     mediaType: mediaTypeEnum("media_type").notNull(),
@@ -45,6 +44,6 @@ export const bookmarks = pgTable(
       table.externalId,
       table.mediaType,
     ),
-    index("bookmark_unique_idx").on(table.userId),
+    index("bookmark_user_idx").on(table.userId),
   ],
 );

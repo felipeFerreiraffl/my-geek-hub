@@ -1,7 +1,7 @@
-import { check, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { users } from "./users.js";
-import { bookmarks } from "./bookmarks.js";
 import { sql } from "drizzle-orm";
+import { check, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { bookmarks } from "./bookmarks.js";
+import { users } from "./users.js";
 
 export const ratings = pgTable(
   "ratings",
