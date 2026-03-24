@@ -6,7 +6,7 @@ const isDev = NODE_ENV !== "prod";
 const createLogger = (prefix: string) => ({
   info: (message: string, data?: unknown) =>
     isDev && console.log(`[${prefix}] ${message}`, data ?? ""),
-  error: (message: string, error?: ErrorType) =>
+  error: (message: string, error?: unknown) =>
     console.error(`[${prefix}] ${message}`, error ?? ""),
   warn: (message: string, warning?: unknown) =>
     isDev && console.warn(`[${prefix}] ${message}`, warning ?? ""),
