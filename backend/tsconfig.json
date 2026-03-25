@@ -10,8 +10,8 @@
       "@drizzle/*": ["./src/db/drizzle/*"]
     },
 
-    "types": ["node"],
+    "types": ["node"]
   },
-  "include": ["src/**/*", "**/*.ts", "**/*.tsx"],
+  "include": ["src/**/*", "**/*.tsx", "**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
