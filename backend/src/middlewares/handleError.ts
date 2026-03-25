@@ -9,7 +9,7 @@ export const errorHandler = (
   next: NextFunction,
 ): void => {
   const status = err.status ?? 500;
-  const message = STATUS_MESSAGE[status];
+  const message = STATUS_MESSAGE[status] ?? "UNKNOWN ERROR";
 
   res.status(status).json({
     success: false,
