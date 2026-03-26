@@ -11,3 +11,13 @@ export type Rating = InferSelectModel<typeof ratings>;
 export type NewRating = InferInsertModel<typeof ratings>;
 
 export type SafeUser = Omit<User, "password">;
+
+export interface UserBodyReq {
+  email: string;
+  password: string;
+}
+
+export interface UserParams {
+  id?: string;
+  email?: string;
+}
