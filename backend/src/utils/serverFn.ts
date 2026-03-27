@@ -4,19 +4,13 @@ import { logger } from "./logger.js";
 export const middlewareFn =
   <P = {}, ResB = {}, ReqB = {}, Q = {}>(
     fn: (
-      optionalProp: unknown | undefined,
       req: Request<P, ResB, ReqB, Q>,
       res: Response,
       next: NextFunction,
     ) => void,
   ) =>
-  (
-    optionalProp: unknown | undefined,
-    req: Request<P, ResB, ReqB, Q>,
-    res: Response,
-    next: NextFunction,
-  ) => {
-    fn(optionalProp, req, res, next);
+  (req: Request<P, ResB, ReqB, Q>, res: Response, next: NextFunction) => {
+    fn(req, res, next);
   };
 
 export const asyncFn =
