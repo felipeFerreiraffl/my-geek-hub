@@ -15,9 +15,15 @@ export type SafeUser = Omit<User, "password">;
 export interface UserBodyReq {
   email: string;
   password: string;
+
+  username?: string;
 }
 
 export interface UserParams {
-  id?: string;
-  email?: string;
+  id: string;
+  email: string;
+}
+
+export interface UserQueries {
+  confirm: "yes";
 }

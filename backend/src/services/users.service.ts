@@ -1,5 +1,5 @@
 import { db } from "@/config/db.js";
-import { users as usersTable } from "@/db/drizzle/index.js";
+import { users, users as usersTable } from "@/db/drizzle/index.js";
 import { User } from "@/types/db.types.js";
 import { eq } from "drizzle-orm";
 
@@ -29,4 +29,12 @@ export const findUserByEmail = async (email: string) => {
 export const createUser = async (user: User): Promise<User> => {
   const [newUser] = await db.insert(usersTable).values(user).returning();
   return newUser;
+};
+
+export const deleteUserById = async (id: string): Promise<void> => {
+  await db.delete(usersTable).where(eq(users.id, id));
+};
+
+export const deleteAllUsers = async (): Promise<void> => {
+  await db.delete(usersTable);
 };
