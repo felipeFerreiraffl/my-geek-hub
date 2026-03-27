@@ -66,6 +66,15 @@ export const deleteUser = asyncFn<UserParams>(async (req, res, next) => {
 
 export const deleteAllUsers = asyncFn<{}, {}, {}, UserQueries>(
   async (req, res, next) => {
+    const { required_id } = req.query;
+
+    // const requiredUser = await UserService.findUserById(required_id);
+
+    if (!required_id) {
+      databaseLogger.error("Cannot delete all users");
+      return next({ status: 404 });
+    }
+
     await UserService.deleteAllUsers();
 
     databaseLogger.info("All users deleted");

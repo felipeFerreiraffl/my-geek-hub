@@ -25,5 +25,5 @@ export interface UserParams {
 }
 
 export interface UserQueries {
-  confirm: "yes";
+  required_id: string;
 }
