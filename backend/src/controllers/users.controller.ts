@@ -41,6 +41,12 @@ export const createUser = asyncFn<{}, {}, UserBodyReq>(
       updatedAt: new Date(),
     };
 
+    const existingUser = await UserService.findUserByEmail(email);
+    if (existingUser.email === userReq.email) {
+      databaseLogger.error("User already exists");
+      return next({ status: 409 });
+    }
+
     const newUser = await UserService.createUser(userReq);
 
     const { password: _, ...userWithoutPassword } = newUser;
