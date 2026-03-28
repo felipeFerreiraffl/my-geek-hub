@@ -35,3 +35,7 @@ export const validateUser = middlewareFn<{}, {}, UserBodyReq>(
     next();
   },
 );
+
+export const validateUserRole = middlewareFn((req, res, next) => {});
+
+export const validateUserOwner = middlewareFn((req, res, next) => {});

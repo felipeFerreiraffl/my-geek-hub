@@ -7,7 +7,7 @@ import {
 } from "@/types/db.types.js";
 import { databaseLogger } from "@/utils/logger.js";
 import { successRes } from "@/utils/messages.js";
-import { asyncFn } from "@/utils/serverFn.js";
+import { asyncFn, hashPassword } from "@/utils/serverFn.js";
 
 export const getUsers = asyncFn(async (_, res, next) => {
   const users = await UserService.findAllUsers();
@@ -29,12 +29,13 @@ export const createUser = asyncFn<{}, {}, UserBodyReq>(
     }
 
     const randomizeUserSuffix = Math.floor(Math.random() * (99999 - 10000));
+    const hashedPassword = await hashPassword(password);
 
     const userReq: User = {
       id: crypto.randomUUID(),
       username: username ?? `geek_${randomizeUserSuffix}`,
       email,
-      password,
+      password: hashedPassword,
       role: "USER",
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -42,11 +43,13 @@ export const createUser = asyncFn<{}, {}, UserBodyReq>(
 
     const newUser = await UserService.createUser(userReq);
 
+    const { password: _, ...userWithoutPassword } = newUser;
+
     databaseLogger.info(
       `User ${newUser.id} created`,
       JSON.stringify(newUser, null, 2),
     );
-    successRes(res, 201, newUser);
+    successRes(res, 201, userWithoutPassword);
   },
 );
 
@@ -68,7 +71,7 @@ export const deleteAllUsers = asyncFn<{}, {}, {}, UserQueries>(
   async (req, res, next) => {
     const { required_id } = req.query;
 
-    // const requiredUser = await UserService.findUserById(required_id);
+    const requiredUser = await UserService.findUserById(required_id);
 
     if (!required_id) {
       databaseLogger.error("Cannot delete all users");
