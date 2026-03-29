@@ -7,7 +7,7 @@ import {
 } from "@/types/db.types.js";
 import { databaseLogger } from "@/utils/logger.js";
 import { successRes } from "@/utils/messages.js";
-import { asyncFn, hashPassword } from "@/utils/serverFn.js";
+import { asyncFn, hashPassword } from "@/utils/asyncFn.js";
 
 export const getUsers = asyncFn(async (_, res, next) => {
   const users = await UserService.findAllUsers();

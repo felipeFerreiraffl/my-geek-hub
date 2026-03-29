@@ -1,6 +1,6 @@
+import { middlewareFn } from "@/utils/serverFn.js";
 import { UserBodyReq } from "@/types/db.types.js";
 import { databaseLogger } from "@/utils/logger.js";
-import { middlewareFn } from "@/utils/serverFn.js";
 import z from "zod";
 
 const emailSchema = z.email();
@@ -35,7 +35,3 @@ export const validateUser = middlewareFn<{}, {}, UserBodyReq>(
     next();
   },
 );
-
-export const validateUserRole = middlewareFn((req, res, next) => {});
-
-export const validateUserOwner = middlewareFn((req, res, next) => {});
