@@ -7,10 +7,14 @@ import {
 } from "@/types/db.types.js";
 import { databaseLogger } from "@/utils/logger.js";
 import { successRes } from "@/utils/messages.js";
-import { asyncFn, hashPassword } from "@/utils/asyncFn.js";
+import { asyncFn, hashPassword } from "@/utils/serverFn.js";
 
-export const getUsers = asyncFn(async (_, res, next) => {
+export const getUsers = asyncFn(async (_, res, __) => {
   const users = await UserService.findAllUsers();
+
+  if (!users) {
+    databaseLogger.warn("No user found");
+  }
 
   databaseLogger.info(
     `${users.length !== 0 ? "All users found" : "No user was found"}`,
@@ -28,6 +32,12 @@ export const createUser = asyncFn<{}, {}, UserBodyReq>(
       return next({ status: 400 });
     }
 
+    const existingUser = await UserService.findUserByEmail(email);
+    if (existingUser) {
+      databaseLogger.error("User already exists");
+      return next({ status: 409 });
+    }
+
     const randomizeUserSuffix = Math.floor(Math.random() * (99999 - 10000));
     const hashedPassword = await hashPassword(password);
 
@@ -40,12 +50,6 @@ export const createUser = asyncFn<{}, {}, UserBodyReq>(
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-
-    const existingUser = await UserService.findUserByEmail(email);
-    if (existingUser.email === userReq.email) {
-      databaseLogger.error("User already exists");
-      return next({ status: 409 });
-    }
 
     const newUser = await UserService.createUser(userReq);
 

@@ -10,7 +10,7 @@ const passwordSchema = z
   .regex(/^(?=.*[A-Z])(?=.*[0-9]).{6,}$/);
 
 export const validateUser = middlewareFn<{}, {}, UserBodyReq>(
-  (req, res, next) => {
+  (req, _, next) => {
     const { email, password } = req.body;
     const validEmail = emailSchema.safeParse(email);
     const validPassword = passwordSchema.safeParse(password);
