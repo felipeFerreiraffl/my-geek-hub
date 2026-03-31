@@ -1,4 +1,9 @@
-import { bookmarks, ratings, users } from "@/db/drizzle/index.js";
+import {
+  bookmarks,
+  ratings,
+  refreshTokens,
+  users,
+} from "@/db/drizzle/index.js";
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 export type User = InferSelectModel<typeof users>;
@@ -10,7 +15,8 @@ export type NewBookmark = InferInsertModel<typeof bookmarks>;
 export type Rating = InferSelectModel<typeof ratings>;
 export type NewRating = InferInsertModel<typeof ratings>;
 
-export type SafeUser = Omit<User, "password">;
+export type RefreshToken = InferSelectModel<typeof refreshTokens>;
+export type NewRefreshToken = InferInsertModel<typeof refreshTokens>;
 
 export interface UserBodyReq {
   email: string;

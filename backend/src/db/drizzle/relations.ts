@@ -2,7 +2,7 @@ import { relations } from "drizzle-orm";
 import { users } from "./schemas/users.js";
 import { bookmarks } from "./schemas/bookmarks.js";
 import { ratings } from "./schemas/ratings.js";
-import { authUser } from "./schemas/auth.js";
+import { refreshTokens } from "./schemas/auth.js";
 
 export const userRelations = relations(users, ({ many }) => ({
   bookmarks: many(bookmarks),
@@ -31,9 +31,9 @@ export const ratingRelations = relations(ratings, ({ one }) => ({
   }),
 }));
 
-export const authUserRelations = relations(authUser, ({ one }) => ({
+export const authUserRelations = relations(refreshTokens, ({ one }) => ({
   user: one(users, {
-    fields: [authUser.id],
+    fields: [refreshTokens.userId],
     references: [users.id],
   }),
 }));
