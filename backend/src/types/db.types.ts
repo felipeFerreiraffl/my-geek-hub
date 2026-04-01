@@ -23,6 +23,7 @@ export interface UserBodyReq {
   password: string;
 
   username?: string;
+  role?: "ADMIN" | "USER";
 }
 
 export interface UserParams {
@@ -30,6 +31,6 @@ export interface UserParams {
   email: string;
 }
 
-export interface UserQueries {
-  required_id: string;
+export interface RefreshTokenBodyReq {
+  tokenHash: string;
 }

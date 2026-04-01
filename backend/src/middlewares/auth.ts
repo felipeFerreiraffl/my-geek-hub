@@ -4,7 +4,7 @@ import { authLogger } from "@/utils/logger.js";
 import { asyncFn, middlewareFn } from "@/utils/serverFn.js";
 import { errors } from "jose";
 
-export const authenticateUser = asyncFn(async (req, res, next) => {
+export const authenticateUser = asyncFn(async (req, _, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -38,8 +38,8 @@ export const authenticateUser = asyncFn(async (req, res, next) => {
 
 const setStatusForRole = () => (NODE_ENV !== "prod" ? 403 : 404);
 
-export const authorize = (requiredRole: "ADMIN" | "USER") => {
-  middlewareFn((req, res, next) => {
+export const authorize = (requiredRole: "ADMIN" | "USER") =>
+  middlewareFn((req, _, next) => {
     if (!req.user) return next({ status: 401 });
 
     if (req.user.role !== requiredRole) {
@@ -48,4 +48,3 @@ export const authorize = (requiredRole: "ADMIN" | "USER") => {
 
     next();
   });
-};

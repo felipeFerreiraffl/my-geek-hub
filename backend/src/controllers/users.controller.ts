@@ -1,10 +1,5 @@
 import * as UserService from "@/services/users.service.js";
-import {
-  User,
-  UserBodyReq,
-  UserParams,
-  UserQueries,
-} from "@/types/db.types.js";
+import { User, UserBodyReq, UserParams } from "@/types/db.types.js";
 import { databaseLogger } from "@/utils/logger.js";
 import { successRes } from "@/utils/messages.js";
 import { asyncFn, hashPassword } from "@/utils/serverFn.js";
@@ -25,7 +20,7 @@ export const getUsers = asyncFn(async (_, res, __) => {
 
 export const createUser = asyncFn<{}, {}, UserBodyReq>(
   async (req, res, next) => {
-    const { email, password, username } = req.body;
+    const { email, password, username, role } = req.body;
 
     if (!email || !password) {
       databaseLogger.error("Required fields not filled");
@@ -77,20 +72,9 @@ export const deleteUser = asyncFn<UserParams>(async (req, res, next) => {
   successRes(res, 200, null);
 });
 
-export const deleteAllUsers = asyncFn<{}, {}, {}, UserQueries>(
-  async (req, res, next) => {
-    const { required_id } = req.query;
+export const deleteAllUsers = asyncFn(async (_, res, __) => {
+  await UserService.deleteAllUsers();
 
-    const requiredUser = await UserService.findUserById(required_id);
-
-    if (!required_id) {
-      databaseLogger.error("Cannot delete all users");
-      return next({ status: 404 });
-    }
-
-    await UserService.deleteAllUsers();
-
-    databaseLogger.info("All users deleted");
-    successRes(res, 200, null);
-  },
-);
+  databaseLogger.info("All users deleted");
+  successRes(res, 200, null);
+});
