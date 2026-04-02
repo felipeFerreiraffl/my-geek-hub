@@ -41,7 +41,7 @@ export const createUser = asyncFn<{}, {}, UserBodyReq>(
       username: username ?? `geek_${randomizeUserSuffix}`,
       email,
       password: hashedPassword,
-      role: "USER",
+      role: role ?? "USER",
       createdAt: new Date(),
       updatedAt: new Date(),
     };

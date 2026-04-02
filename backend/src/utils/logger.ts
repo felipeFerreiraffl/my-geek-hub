@@ -1,5 +1,4 @@
 import { NODE_ENV } from "@/constants/dotenv.js";
-import { ErrorType } from "@/types/status.types.js";
 
 const isDev = NODE_ENV !== "prod";
 

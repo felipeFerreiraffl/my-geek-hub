@@ -11,7 +11,13 @@ userRouter.get(
   authorize("ADMIN"),
   UserController.getUsers,
 );
-userRouter.post("/", validateUser, UserController.createUser);
+userRouter.post(
+  "/",
+  validateUser,
+  authenticateUser,
+  authorize("ADMIN"),
+  UserController.createUser,
+);
 userRouter.delete("/:id", UserController.deleteUser);
 userRouter.delete(
   "/",
