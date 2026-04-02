@@ -1,9 +1,11 @@
 import * as AuthController from "@/controllers/auth.controller.js";
-import { authLogger } from "@/utils/logger.js";
+import { validateUser } from "@/middlewares/validation.js";
 import { Router } from "express";
 
 const authRouter = Router();
 
-authRouter.post("/login", AuthController.signIn);
+authRouter.post("/login", validateUser, AuthController.signIn);
+authRouter.post("/register", validateUser, AuthController.signUp);
+authRouter.post("/refresh", AuthController.refreshSign);
 
 export default authRouter;

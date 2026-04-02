@@ -1,5 +1,5 @@
 import * as AuthService from "@/services/auth.service.js";
-import { UserBodyReq } from "@/types/db.types.js";
+import { RefreshTokenBodyReq, UserBodyReq } from "@/types/db.types.js";
 import { authLogger } from "@/utils/logger.js";
 import { successRes } from "@/utils/messages.js";
 import { asyncFn } from "@/utils/serverFn.js";
@@ -31,3 +31,51 @@ export const signIn = asyncFn<{}, {}, UserBodyReq>(async (req, res, next) => {
     refreshToken: authenticated.refreshToken,
   });
 });
+
+export const signUp = asyncFn<{}, {}, UserBodyReq>(async (req, res, next) => {
+  const { username, email, password } = req.body;
+
+  if (!email || !password) {
+    authLogger.error("Email and password required");
+    return next({ status: 400 });
+  }
+
+  const result = await AuthService.register(email, password, username);
+
+  if (!result) {
+    authLogger.error("Email already exists");
+    return next({ status: 409 });
+  }
+
+  const { password: _, ...userWithoutPassword } = result.newUser;
+
+  authLogger.info(`User ${result.newUser.id} registred`);
+  successRes(res, 201, {
+    user: userWithoutPassword,
+    accessToken: result.accessToken,
+    refreshToken: result.refreshToken,
+  });
+});
+
+export const refreshSign = asyncFn<{}, {}, RefreshTokenBodyReq>(
+  async (req, res, next) => {
+    const { tokenHash } = req.body;
+
+    if (!tokenHash) {
+      authLogger.error("Refresh token required");
+      return next({ status: 400 });
+    }
+
+    const result = await AuthService.refresh(tokenHash);
+    if (!result) {
+      authLogger.error("Invalid or expired refresh token");
+      return next({ status: 401 });
+    }
+
+    authLogger.info("Token refreshed", JSON.stringify(result));
+    successRes(res, 200, {
+      accessToken: result.newAccessToken,
+      refreshToken: result.newRefreshToken,
+    });
+  },
+);

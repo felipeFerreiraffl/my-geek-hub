@@ -70,7 +70,7 @@ export const createAccessToken = async (
   });
 };
 
-export const refreshAccessToken = async (userId: string) => {
+export const createRefreshToken = async (userId: string) => {
   const minPayload = {
     sub: userId,
   };

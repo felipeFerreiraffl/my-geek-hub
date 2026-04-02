@@ -36,13 +36,14 @@ export const authenticateUser = asyncFn(async (req, _, next) => {
   }
 });
 
-const setStatusForRole = () => (NODE_ENV !== "prod" ? 403 : 404);
+const setStatusForRole = NODE_ENV !== "prod" ? 403 : 404;
 
 export const authorize = (requiredRole: "ADMIN" | "USER") =>
   middlewareFn((req, _, next) => {
     if (!req.user) return next({ status: 401 });
 
     if (req.user.role !== requiredRole) {
+      authLogger.error("User not authorized for this operation");
       return next({ status: setStatusForRole });
     }
 

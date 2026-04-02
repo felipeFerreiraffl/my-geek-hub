@@ -9,7 +9,8 @@ import {
   createRefreshToken,
   verifyRefreshToken,
 } from "@/libs/jwt.js";
-import { RefreshToken } from "@/types/db.types.js";
+import { RefreshToken, User } from "@/types/db.types.js";
+import { hashPassword } from "@/utils/serverFn.js";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
@@ -32,13 +33,57 @@ export const login = async (email: string, password: string) => {
     id: crypto.randomUUID(),
     userId: user.id,
     tokenHash,
-    created_at: new Date(),
-    expires_at: new Date(Date.now() + REFRESH_EXPIRED_TIME),
+    createdAt: new Date(),
+    expiresAt: new Date(Date.now() + REFRESH_EXPIRED_TIME),
   };
 
   await db.insert(refreshTokensTable).values(refreshTokenVal);
 
   return { user, accessToken, refreshToken };
+};
+
+export const register = async (
+  email: string,
+  password: string,
+  username?: string,
+) => {
+  const [existingUser] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.email, email));
+
+  if (existingUser) return null;
+
+  const randomizeUserSuffix = Math.floor(Math.random() * (99999 - 10000));
+  const hashedPassword = await hashPassword(password);
+
+  const user: User = {
+    id: crypto.randomUUID(),
+    username: username ?? `geek_${randomizeUserSuffix}`,
+    email,
+    password: hashedPassword,
+    role: "USER",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  const [newUser] = await db.insert(usersTable).values(user).returning();
+
+  const accessToken = await createAccessToken(newUser.id, newUser.role);
+  const refreshToken = await createRefreshToken(newUser.id);
+
+  const tokenHash = await bcrypt.hash(refreshToken, 10);
+  const refreshTokenVal: RefreshToken = {
+    id: crypto.randomUUID(),
+    userId: newUser.id,
+    tokenHash,
+    createdAt: new Date(),
+    expiresAt: new Date(Date.now() + REFRESH_EXPIRED_TIME),
+  };
+
+  await db.insert(refreshTokensTable).values(refreshTokenVal);
+
+  return { newUser, accessToken, refreshToken };
 };
 
 export const refresh = async (refreshToken: string) => {
@@ -60,9 +105,11 @@ export const refresh = async (refreshToken: string) => {
   }
 
   if (!matchedToken) return null;
-  if (matchedToken.expires_at < new Date()) return null;
+  if (matchedToken.expiresAt < new Date()) return null;
 
-  await db.delete(refreshTokensTable).where(eq(usersTable.id, payload.sub));
+  await db
+    .delete(refreshTokensTable)
+    .where(eq(refreshTokensTable.id, matchedToken.id));
 
   const [user] = await db
     .select()
@@ -79,8 +126,8 @@ export const refresh = async (refreshToken: string) => {
     id: crypto.randomUUID(),
     userId: user.id,
     tokenHash,
-    created_at: new Date(),
-    expires_at: new Date(Date.now() + REFRESH_EXPIRED_TIME),
+    createdAt: new Date(),
+    expiresAt: new Date(Date.now() + REFRESH_EXPIRED_TIME),
   };
 
   await db.insert(refreshTokensTable).values(refreshTokenVal);

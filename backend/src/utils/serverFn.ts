@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import { logger } from "./logger.js";
 import bcrypt from "bcryptjs";
+import { NextFunction, Request, Response } from "express";
+import { logger } from "./logger.js";
 
 export const middlewareFn =
   <P = {}, ResB = {}, ReqB = {}, Q = {}>(
