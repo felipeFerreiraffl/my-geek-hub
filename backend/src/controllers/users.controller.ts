@@ -69,8 +69,14 @@ export const updateUser = asyncFn<UserParams, {}, UserUpdateReq>(
     const { password, ...otherFields } = req.body;
 
     if (!id) {
-      authLogger.error("ID is required");
+      databaseLogger.error("ID is required");
       return next({ status: 400 });
+    }
+
+    const existingUser = await UserService.findUserById(id);
+    if (!existingUser) {
+      databaseLogger.error("User not found");
+      return next({ status: 404 });
     }
 
     const fieldsToUpdate: Partial<User> = {
@@ -91,8 +97,8 @@ export const updateUser = asyncFn<UserParams, {}, UserUpdateReq>(
 
     const newUser = await UserService.alterUser(id, fieldsToUpdate);
     if (!newUser) {
-      authLogger.error("");
-      return next({ status: 400 });
+      databaseLogger.error("Couldn't update user");
+      return next({ status: 500 });
     }
 
     const { password: _, ...userWithoutPassword } = newUser;
