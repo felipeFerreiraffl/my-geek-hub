@@ -1,6 +1,10 @@
 import * as UserController from "@/controllers/users.controller.js";
-import { authenticateUser, authorize } from "@/middlewares/auth.js";
-import { validateUser } from "@/middlewares/validation.js";
+import {
+  authenticateUser,
+  authorize,
+  authorizeAdminOnly,
+} from "@/middlewares/auth.middleware.js";
+import { validateUser } from "@/middlewares/validation.middleware.js";
 import { Router } from "express";
 
 const userRouter = Router();
@@ -8,21 +12,32 @@ const userRouter = Router();
 userRouter.get(
   "/",
   authenticateUser,
-  authorize("ADMIN"),
+  authorizeAdminOnly,
   UserController.getUsers,
 );
 userRouter.post(
   "/",
   validateUser,
   authenticateUser,
-  authorize("ADMIN"),
+  authorizeAdminOnly,
   UserController.createUser,
 );
-userRouter.delete("/:id", UserController.deleteUser);
+userRouter.patch(
+  "/:id",
+  authenticateUser,
+  authorize,
+  UserController.updateUser,
+);
+userRouter.delete(
+  "/:id",
+  authenticateUser,
+  authorize,
+  UserController.deleteUser,
+);
 userRouter.delete(
   "/",
   authenticateUser,
-  authorize("ADMIN"),
+  authorizeAdminOnly,
   UserController.deleteAllUsers,
 );
 

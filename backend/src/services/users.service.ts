@@ -31,6 +31,19 @@ export const createUser = async (user: User): Promise<User> => {
   return newUser;
 };
 
+export const alterUser = async (
+  id: string,
+  user: Partial<User>,
+): Promise<User> => {
+  const [newUser] = await db
+    .update(usersTable)
+    .set(user)
+    .where(eq(usersTable.id, id))
+    .returning();
+
+  return newUser;
+};
+
 export const deleteUserById = async (id: string): Promise<void> => {
   await db.delete(usersTable).where(eq(usersTable.id, id));
 };

@@ -1,6 +1,11 @@
 import * as UserService from "@/services/users.service.js";
-import { User, UserBodyReq, UserParams } from "@/types/db.types.js";
-import { databaseLogger } from "@/utils/logger.js";
+import {
+  User,
+  UserBodyReq,
+  UserParams,
+  UserUpdateReq,
+} from "@/types/db.types.js";
+import { authLogger, databaseLogger } from "@/utils/logger.js";
 import { successRes } from "@/utils/messages.js";
 import { asyncFn, hashPassword } from "@/utils/serverFn.js";
 
@@ -55,6 +60,48 @@ export const createUser = asyncFn<{}, {}, UserBodyReq>(
       JSON.stringify(newUser, null, 2),
     );
     successRes(res, 201, userWithoutPassword);
+  },
+);
+
+export const updateUser = asyncFn<UserParams, {}, UserUpdateReq>(
+  async (req, res, next) => {
+    const { id } = req.params;
+    const { password, ...otherFields } = req.body;
+
+    if (!id) {
+      authLogger.error("ID is required");
+      return next({ status: 400 });
+    }
+
+    const fieldsToUpdate: Partial<User> = {
+      ...otherFields,
+      updatedAt: new Date(),
+    };
+
+    const hasFields = Object.keys(otherFields).length > 0 || password;
+
+    if (!hasFields) {
+      databaseLogger.error("No fields to update");
+      return next({ status: 400 });
+    }
+
+    if (password) {
+      fieldsToUpdate.password = await hashPassword(password);
+    }
+
+    const newUser = await UserService.alterUser(id, fieldsToUpdate);
+    if (!newUser) {
+      authLogger.error("");
+      return next({ status: 400 });
+    }
+
+    const { password: _, ...userWithoutPassword } = newUser;
+
+    databaseLogger.info(
+      `User ${id} updated`,
+      JSON.stringify(userWithoutPassword, null, 2),
+    );
+    successRes(res, 200, userWithoutPassword);
   },
 );
 

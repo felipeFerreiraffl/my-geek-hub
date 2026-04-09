@@ -1,5 +1,6 @@
 import { NODE_ENV } from "@/constants/dotenv.js";
 import { verifyAccessToken } from "@/libs/jwt.js";
+import { UserParams } from "@/types/db.types.js";
 import { authLogger } from "@/utils/logger.js";
 import { asyncFn, middlewareFn } from "@/utils/serverFn.js";
 import { errors } from "jose";
@@ -38,14 +39,29 @@ export const authenticateUser = asyncFn(async (req, _, next) => {
 
 const setStatusForRole = NODE_ENV !== "prod" ? 403 : 404;
 
-export const authorize = (requiredRole: "ADMIN" | "USER") =>
-  middlewareFn((req, _, next) => {
-    if (!req.user) return next({ status: 401 });
+export const authorizeAdminOnly = middlewareFn((req, _, next) => {
+  if (!req.user) return next({ status: 401 });
 
-    if (req.user.role !== requiredRole) {
-      authLogger.error("User not authorized for this operation");
-      return next({ status: setStatusForRole });
-    }
+  const isAdmin = req.user.role === "ADMIN";
 
-    next();
-  });
+  if (!isAdmin) {
+    authLogger.error("Admin only operation");
+    return next({ status: setStatusForRole });
+  }
+
+  next();
+});
+
+export const authorize = middlewareFn<UserParams>((req, _, next) => {
+  if (!req.user) return next({ status: 401 });
+
+  const isSelf = req.user.id === req.params.id;
+  const isAdmin = req.user.role === "ADMIN";
+
+  if (!isSelf && !isAdmin) {
+    authLogger.error("User not authorized for this operation");
+    return next({ status: setStatusForRole });
+  }
+
+  next();
+});

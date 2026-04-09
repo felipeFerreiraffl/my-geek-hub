@@ -26,6 +26,12 @@ export interface UserBodyReq {
   role?: "ADMIN" | "USER";
 }
 
+export interface UserUpdateReq {
+  username?: string;
+  email?: string;
+  password?: string;
+}
+
 export interface UserParams {
   id: string;
   email: string;
