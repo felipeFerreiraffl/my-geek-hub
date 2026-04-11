@@ -15,12 +15,14 @@ userRouter.get(
   authorizeAdminOnly,
   UserController.getUsers,
 );
+userRouter.get("/me", authenticateUser, authorize, UserController.getMe);
 userRouter.get(
   "/:id",
   authenticateUser,
   authorizeAdminOnly,
   UserController.getUserById,
 );
+
 userRouter.post(
   "/",
   validateUser,
@@ -28,12 +30,14 @@ userRouter.post(
   authorizeAdminOnly,
   UserController.createUser,
 );
+
 userRouter.patch(
   "/:id",
   authenticateUser,
   authorize,
   UserController.updateUser,
 );
+
 userRouter.delete(
   "/:id",
   authenticateUser,

@@ -37,6 +37,24 @@ export const getUserById = asyncFn<UserParams>(async (req, res, next) => {
   successRes(res, 200, user);
 });
 
+export const getMe = asyncFn(async (req, res, next) => {
+  const id = req.user?.id;
+
+  if (!id) {
+    return next({ status: 404 });
+  }
+
+  const userMe = await UserService.findUserById(id);
+
+  if (!userMe) {
+    databaseLogger.error(`User with ID ${id} not found`);
+    return next({ status: 404 });
+  }
+
+  databaseLogger.info(`Seeing informations for your user`, userMe);
+  successRes(res, 200, userMe);
+});
+
 export const createUser = asyncFn<{}, {}, UserBodyReq>(
   async (req, res, next) => {
     const { email, password, username, role } = req.body;
@@ -131,6 +149,12 @@ export const deleteUser = asyncFn<UserParams>(async (req, res, next) => {
   if (!id) {
     databaseLogger.error("ID is required");
     return next({ status: 400 });
+  }
+
+  const existingUser = await UserService.findUserById(id);
+  if (!existingUser) {
+    databaseLogger.error(`User ${id} not found`);
+    return next({ status: 404 });
   }
 
   await UserService.deleteUserById(id);

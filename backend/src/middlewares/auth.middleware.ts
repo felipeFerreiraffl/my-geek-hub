@@ -55,7 +55,7 @@ export const authorizeAdminOnly = middlewareFn((req, _, next) => {
 export const authorize = middlewareFn<UserParams>((req, _, next) => {
   if (!req.user) return next({ status: 401 });
 
-  const isSelf = req.user.id === req.params.id;
+  const isSelf = req.user.id === req.user.id;
   const isAdmin = req.user.role === "ADMIN";
 
   if (!isSelf && !isAdmin) {
