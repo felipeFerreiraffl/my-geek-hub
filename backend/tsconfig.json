@@ -6,11 +6,12 @@
     "rootDir": "./src",
 
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@drizzle/*": ["./src/db/drizzle/*"]
     },
 
     "types": ["node"]
   },
-  "include": ["src/**/*", "**/*.ts", "**/*.tsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "dist"]
 }

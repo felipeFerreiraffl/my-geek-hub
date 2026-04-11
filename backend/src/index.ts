@@ -1,7 +1,5 @@
-import express from "express";
-import { PORT } from "./constants/constants.js";
-
-const app = express();
+import app from "./app.js";
+import { PORT } from "./constants/dotenv.js";
 
 app.listen(PORT, () => {
   console.log(`Server running in http://localhost:${PORT}`);
