@@ -18,7 +18,7 @@ export const getUsers = asyncFn(async (_, res, __) => {
 
   databaseLogger.info(
     `${users.length !== 0 ? "All users found" : "No user was found"}`,
-    users.length !== 0 ? JSON.stringify(users, null, 2) : "",
+    users,
   );
   successRes(res, 200, users);
 });
@@ -87,10 +87,7 @@ export const createUser = asyncFn<{}, {}, UserBodyReq>(
 
     const { password: _, ...userWithoutPassword } = newUser;
 
-    databaseLogger.info(
-      `User ${newUser.id} created`,
-      JSON.stringify(newUser, null, 2),
-    );
+    databaseLogger.info(`User ${newUser.id} created`, newUser);
     successRes(res, 201, userWithoutPassword);
   },
 );
@@ -135,10 +132,7 @@ export const updateUser = asyncFn<UserParams, {}, UserUpdateReq>(
 
     const { password: _, ...userWithoutPassword } = newUser;
 
-    databaseLogger.info(
-      `User ${id} updated`,
-      JSON.stringify(userWithoutPassword, null, 2),
-    );
+    databaseLogger.info(`User ${id} updated`, userWithoutPassword);
     successRes(res, 200, userWithoutPassword);
   },
 );
