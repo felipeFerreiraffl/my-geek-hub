@@ -15,6 +15,12 @@ userRouter.get(
   authorizeAdminOnly,
   UserController.getUsers,
 );
+userRouter.get(
+  "/:id",
+  authenticateUser,
+  authorizeAdminOnly,
+  UserController.getUserById,
+);
 userRouter.post(
   "/",
   validateUser,

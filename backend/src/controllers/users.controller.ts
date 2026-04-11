@@ -23,6 +23,20 @@ export const getUsers = asyncFn(async (_, res, __) => {
   successRes(res, 200, users);
 });
 
+export const getUserById = asyncFn<UserParams>(async (req, res, next) => {
+  const { id } = req.params;
+
+  const user = await UserService.findUserById(id);
+
+  if (!user) {
+    databaseLogger.error(`User with ID ${id} not found`);
+    return next({ status: 404 });
+  }
+
+  databaseLogger.info(`User ID ${id} found`, user);
+  successRes(res, 200, user);
+});
+
 export const createUser = asyncFn<{}, {}, UserBodyReq>(
   async (req, res, next) => {
     const { email, password, username, role } = req.body;
