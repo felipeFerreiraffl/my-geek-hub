@@ -5,7 +5,7 @@ import {
   UserParams,
   UserUpdateReq,
 } from "@/types/db.types.js";
-import { authLogger, databaseLogger } from "@/utils/logger.js";
+import { databaseLogger } from "@/utils/logger.js";
 import { successRes } from "@/utils/messages.js";
 import { asyncFn, hashPassword } from "@/utils/serverFn.js";
 

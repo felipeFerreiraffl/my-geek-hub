@@ -1,4 +1,4 @@
-import { DATABASE_URL, NODE_ENV } from "@/constants/dotenv.js";
+import { DATABASE_URL } from "@/constants/dotenv.js";
 import * as schema from "@/db/drizzle/index.js";
 import * as relations from "@drizzle/relations.js";
 import { drizzle } from "drizzle-orm/postgres-js";

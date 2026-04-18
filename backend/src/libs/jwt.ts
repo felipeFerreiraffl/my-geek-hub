@@ -5,7 +5,7 @@ import {
   JWT_REFRESH_SECRET,
 } from "@/constants/dotenv.js";
 import { JWTAuthPayload } from "@/types/auth.types.js";
-import { errors, jwtVerify, SignJWT } from "jose";
+import { jwtVerify, SignJWT } from "jose";
 
 interface SignTokenProps {
   payload: JWTAuthPayload;
