@@ -1,6 +1,23 @@
 import app from "./app.js";
-import { PORT } from "./constants/dotenv.js";
+import { connectDb } from "./config/db.js";
+import { NODE_ENV, PORT } from "./constants/dotenv.js";
 
-app.listen(PORT, () => {
-  console.log(`Server running in http://localhost:${PORT}`);
+const bootstrap = async (): Promise<void> => {
+  await connectDb();
+
+  if (NODE_ENV !== "prod") {
+    app.listen(PORT, () => {
+      console.group(`\n [MYGEEKHUB]`);
+      console.log(`• Environment →   ${NODE_ENV}`);
+      console.log(`• Port        →   ${PORT}`);
+      console.log(`• PID         →   ${process.pid}`);
+      console.groupEnd();
+      console.log(`\n Available on http://localhost:${PORT}`);
+    });
+  }
+};
+
+bootstrap().catch((err) => {
+  console.error("[FATAL] Initialization error:", err);
+  process.exit(1);
 });

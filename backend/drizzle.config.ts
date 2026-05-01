@@ -1,6 +1,5 @@
-import {
-  DATABASE_URL
-} from "@/constants/dotenv.js";
+import { DATABASE_URL } from "./src/constants/dotenv";
+
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
