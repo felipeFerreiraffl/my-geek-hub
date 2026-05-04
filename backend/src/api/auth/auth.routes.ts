@@ -1,4 +1,4 @@
-import * as AuthController from "@/controllers/auth.controller.js";
+import * as AuthController from "@/api/auth/auth.controller.js";
 import { validateUser } from "@/middlewares/validation.middleware.js";
 import { Router } from "express";
 

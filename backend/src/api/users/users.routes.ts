@@ -1,4 +1,4 @@
-import * as UserController from "@/controllers/users.controller.js";
+import * as UserController from "@/api/users/users.controller.js";
 import {
   authenticateUser,
   authorize,

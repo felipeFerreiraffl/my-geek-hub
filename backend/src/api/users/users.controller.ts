@@ -1,4 +1,4 @@
-import * as UserService from "@/services/users.service.js";
+import * as UserService from "@/api/users/users.service.js";
 import {
   User,
   UserBodyReq,

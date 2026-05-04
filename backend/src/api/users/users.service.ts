@@ -1,6 +1,6 @@
 import { db } from "@/config/db.js";
 import { users as usersTable } from "@/db/drizzle/index.js";
-import { User } from "@/types/db.types.js";
+import { NewUser, User } from "@/types/db.types.js";
 import { eq } from "drizzle-orm";
 
 export const findAllUsers = async (): Promise<User[]> => {
@@ -26,7 +26,7 @@ export const findUserByEmail = async (email: string) => {
   return user ?? null;
 };
 
-export const createUser = async (user: User): Promise<User> => {
+export const createUser = async (user: NewUser): Promise<NewUser> => {
   const [newUser] = await db.insert(usersTable).values(user).returning();
   return newUser;
 };
