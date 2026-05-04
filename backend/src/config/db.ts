@@ -34,7 +34,7 @@ export const connectDb = async (): Promise<void> => {
     const tableNames = tables.map((t) => t.table).join(", ") || "nenhuma";
 
     console.group("\n [DATABASE INFOS]");
-    console.log(`✓ PostgreSQL  →  connected (${latency}ms)`);
+    console.log(`✓ PostgreSQL connected (${latency}ms)`);
     console.log(`• Database    →  ${dbInfo.name}`);
     console.log(`• Size        →  ${dbInfo.size}`);
     console.log(`• Tables      →  ${tableNames}`);
