@@ -1,5 +1,6 @@
 import {
   index,
+  integer,
   pgEnum,
   pgTable,
   text,
@@ -27,7 +28,7 @@ export const bookmarks = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    externalId: text("external_id").notNull(),
+    externalId: integer("external_id").notNull(),
     title: text("title").notNull(),
     imageUrl: text("image_url"),
     mediaType: mediaTypeEnum("media_type").notNull(),

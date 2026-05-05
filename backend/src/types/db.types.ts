@@ -40,3 +40,27 @@ export interface UserParams {
 export interface RefreshTokenBodyReq {
   tokenHash: string;
 }
+
+export type BookmarkMediaType = "ANIME" | "MANGA" | "GAME";
+
+export type BookmarkStatus =
+  | "WATCHING"
+  | "COMPLETED"
+  | "PLANNED"
+  | "PAUSED"
+  | "DROPPED";
+
+export interface BookmarkBodyReq {
+  userId: string;
+  status: BookmarkStatus;
+  mediaType: BookmarkMediaType;
+
+  title?: string;
+  imageUrl?: string;
+  externalId?: number;
+}
+
+export interface BookmarkParams {
+  id: string;
+  userId: string;
+}

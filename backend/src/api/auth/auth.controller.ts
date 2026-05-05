@@ -1,4 +1,4 @@
-import * as AuthService from "@/services/auth.service.js";
+import * as AuthService from "./auth.service.js";
 import { RefreshTokenBodyReq, UserBodyReq } from "@/types/db.types.js";
 import { authLogger } from "@/utils/logger.js";
 import { successRes } from "@/utils/messages.js";
