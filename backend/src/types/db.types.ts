@@ -60,6 +60,10 @@ export interface BookmarkBodyReq {
   externalId?: number;
 }
 
+export interface UpdateBookmarkBodyReq {
+  status: BookmarkStatus;
+}
+
 export interface BookmarkParams {
   id: string;
   userId: string;

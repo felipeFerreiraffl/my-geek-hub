@@ -1,5 +1,6 @@
 import {
   authenticateUser,
+  authorize,
   authorizeAdminOnly,
 } from "@/middlewares/auth.middleware.js";
 import * as BookmarkController from "./bookmarks.controller.js";
@@ -14,6 +15,12 @@ bookmarkRouter.get(
   BookmarkController.getBookmarks,
 );
 bookmarkRouter.get(
+  "/me",
+  authenticateUser,
+  authorize,
+  BookmarkController.getMyBookmarks,
+);
+bookmarkRouter.get(
   "/:id",
   authenticateUser,
   authorizeAdminOnly,
@@ -25,6 +32,25 @@ bookmarkRouter.post(
   authenticateUser,
   authorizeAdminOnly,
   BookmarkController.createBookmark,
+);
+bookmarkRouter.post(
+  "/me",
+  authenticateUser,
+  authorize,
+  BookmarkController.createMyBookmark,
+);
+
+bookmarkRouter.put(
+  "/me/:id",
+  authenticateUser,
+  authorize,
+  BookmarkController.updateMyBookmark,
+);
+bookmarkRouter.put(
+  "/:id",
+  authenticateUser,
+  authorizeAdminOnly,
+  BookmarkController.updateBookmark,
 );
 
 export default bookmarkRouter;
