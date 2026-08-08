@@ -19,9 +19,22 @@ bookmarkRouter.post("/me", authenticateUser, authorize, BookmarkController.creat
 bookmarkRouter.put("/me/:id", authenticateUser, authorize, BookmarkController.updateMyBookmark);
 bookmarkRouter.put("/:id", authenticateUser, authorizeAdminOnly, BookmarkController.updateBookmark);
 
-bookmarkRouter.delete("/:id", authenticateUser, authorize, BookmarkController.deleteBookmark);
 bookmarkRouter.delete(
   "/:id",
+  authenticateUser,
+  authorizeAdminOnly,
+  BookmarkController.deleteBookmark,
+);
+bookmarkRouter.delete("/me/:id", authenticateUser, authorize, BookmarkController.deleteMyBookmark);
+bookmarkRouter.delete("/me", authenticateUser, authorize, BookmarkController.deleteAllMyBookmarks);
+bookmarkRouter.delete(
+  "/",
+  authenticateUser,
+  authorizeAdminOnly,
+  BookmarkController.deleteAllBookmarksFromUser,
+);
+bookmarkRouter.delete(
+  "/",
   authenticateUser,
   authorizeAdminOnly,
   BookmarkController.deleteAllBookmarks,

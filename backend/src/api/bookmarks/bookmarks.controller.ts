@@ -217,6 +217,90 @@ export const updateMyBookmark = asyncFn<BookmarkParams & UserParams, {}, UpdateB
   },
 );
 
-export const deleteBookmark = asyncFn<BookmarkParams>(async (req, res, next) => {});
+export const deleteBookmark = asyncFn<BookmarkParams>(async (req, res, next) => {
+  const { id, userId } = req.params;
 
-export const deleteAllBookmarks = asyncFn(async (_, res, __) => {});
+  if (!id) {
+    databaseLogger.error("ID is required");
+    return next({ status: 400 });
+  }
+
+  const existingUser = await UserService.findUserById(userId);
+  if (!existingUser) {
+    databaseLogger.error(`User ${userId} not found`);
+    return next({ status: 404 });
+  }
+
+  await BookmarkService.deleteBookmarkById(id);
+
+  databaseLogger.info(`Bookmark ${id} removed`);
+  successRes(res, 200, null);
+});
+
+export const deleteMyBookmark = asyncFn<BookmarkParams & UserParams>(async (req, res, next) => {
+  const { id } = req.params;
+  const userId = req.user?.id;
+
+  if (!id) {
+    databaseLogger.error("ID is required");
+    return next({ status: 400 });
+  }
+
+  if (!userId) {
+    databaseLogger.error("User ID not found");
+    return next({ status: 404 });
+  }
+
+  const existingUser = await UserService.findUserById(userId);
+  if (!existingUser) {
+    databaseLogger.error(`User ${userId} not found`);
+    return next({ status: 404 });
+  }
+
+  await BookmarkService.deleteBookmarkById(id);
+
+  databaseLogger.info(`Your bookmark ${id} removed`);
+  successRes(res, 200, null);
+});
+
+export const deleteAllBookmarks = asyncFn(async (_, res, __) => {
+  await BookmarkService.deleteAllBookmarks();
+
+  databaseLogger.info(`All bookmarks removed`);
+  successRes(res, 200, null);
+});
+
+export const deleteAllBookmarksFromUser = asyncFn<BookmarkParams>(async (req, res, next) => {
+  const { userId } = req.params;
+
+  const existingUser = await UserService.findUserById(userId);
+  if (!existingUser) {
+    databaseLogger.error(`User ${userId} not found`);
+    return next({ status: 404 });
+  }
+
+  await BookmarkService.deleteAllBookmarksByUserId(userId);
+
+  databaseLogger.info(`All bookmarks from user ${userId} removed`);
+  successRes(res, 200, null);
+});
+
+export const deleteAllMyBookmarks = asyncFn<UserParams>(async (req, res, next) => {
+  const userId = req.user?.id;
+
+  if (!userId) {
+    databaseLogger.error("User ID not found");
+    return next({ status: 404 });
+  }
+
+  const existingUser = await UserService.findUserById(userId);
+  if (!existingUser) {
+    databaseLogger.error(`User ${userId} not found`);
+    return next({ status: 404 });
+  }
+
+  await BookmarkService.deleteAllBookmarksByUserId(userId);
+
+  databaseLogger.info(`All bookmarks from user ${userId} removed`);
+  successRes(res, 200, null);
+});
