@@ -9,43 +9,25 @@ export const findAllBookmarks = async (): Promise<Bookmark[]> => {
   return bookmarks ?? [];
 };
 
-export const findBookmarkById = async (
-  id: string,
-): Promise<Bookmark | null> => {
-  const [bookmark] = await db
-    .select()
-    .from(bookmarksTable)
-    .where(eq(bookmarksTable.id, id));
+export const findBookmarkById = async (id: string): Promise<Bookmark | null> => {
+  const [bookmark] = await db.select().from(bookmarksTable).where(eq(bookmarksTable.id, id));
 
   return bookmark ?? null;
 };
 
-export const findBookmarksByUserId = async (
-  userId: string,
-): Promise<Bookmark[]> => {
-  const bookmarks = await db
-    .select()
-    .from(bookmarksTable)
-    .where(eq(bookmarksTable.userId, userId));
+export const findBookmarksByUserId = async (userId: string): Promise<Bookmark[]> => {
+  const bookmarks = await db.select().from(bookmarksTable).where(eq(bookmarksTable.userId, userId));
 
   return bookmarks ?? [];
 };
 
-export const createBookmark = async (
-  bookmark: NewBookmark,
-): Promise<NewBookmark> => {
-  const [newBookmark] = await db
-    .insert(bookmarksTable)
-    .values(bookmark)
-    .returning();
+export const createBookmark = async (bookmark: NewBookmark): Promise<NewBookmark> => {
+  const [newBookmark] = await db.insert(bookmarksTable).values(bookmark).returning();
 
   return newBookmark;
 };
 
-export const alterBookmark = async (
-  id: string,
-  bookmark: Partial<Bookmark>,
-): Promise<Bookmark> => {
+export const alterBookmark = async (id: string, bookmark: Partial<Bookmark>): Promise<Bookmark> => {
   const [newBookmark] = await db
     .update(bookmarksTable)
     .set(bookmark)
@@ -59,9 +41,7 @@ export const deleteBookmarkById = async (id: string): Promise<void> => {
   await db.delete(bookmarksTable).where(eq(bookmarksTable.id, id));
 };
 
-export const deleteAllBookmarksByUserId = async (
-  userId: string,
-): Promise<void> => {
+export const deleteAllBookmarksByUserId = async (userId: string): Promise<void> => {
   await db.delete(bookmarksTable).where(eq(bookmarksTable.userId, userId));
 };
 

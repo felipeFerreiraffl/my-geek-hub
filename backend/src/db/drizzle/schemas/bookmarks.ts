@@ -1,12 +1,4 @@
-import {
-  index,
-  integer,
-  pgEnum,
-  pgTable,
-  text,
-  timestamp,
-  uniqueIndex,
-} from "drizzle-orm/pg-core";
+import { index, integer, pgEnum, pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 import { users } from "./users.js";
 
 export const mediaTypeEnum = pgEnum("media_type", ["ANIME", "MANGA", "GAME"]);
@@ -40,11 +32,7 @@ export const bookmarks = pgTable(
       .$onUpdateFn(() => new Date()),
   },
   (table) => [
-    uniqueIndex("bookmark_unique_idx").on(
-      table.userId,
-      table.externalId,
-      table.mediaType,
-    ),
+    uniqueIndex("bookmark_unique_idx").on(table.userId, table.externalId, table.mediaType),
     index("bookmark_user_idx").on(table.userId),
   ],
 );

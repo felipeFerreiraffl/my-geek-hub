@@ -1,9 +1,4 @@
-import {
-  bookmarks,
-  ratings,
-  refreshTokens,
-  users,
-} from "@/db/drizzle/index.js";
+import { bookmarks, ratings, refreshTokens, users } from "@/db/drizzle/index.js";
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 export type User = InferSelectModel<typeof users>;
@@ -43,12 +38,7 @@ export interface RefreshTokenBodyReq {
 
 export type BookmarkMediaType = "ANIME" | "MANGA" | "GAME";
 
-export type BookmarkStatus =
-  | "WATCHING"
-  | "COMPLETED"
-  | "PLANNED"
-  | "PAUSED"
-  | "DROPPED";
+export type BookmarkStatus = "WATCHING" | "COMPLETED" | "PLANNED" | "PAUSED" | "DROPPED";
 
 export interface BookmarkBodyReq {
   userId: string;

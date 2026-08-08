@@ -54,10 +54,7 @@ export const isValidPayload = (payload: JWTAuthPayload) => {
   );
 };
 
-export const createAccessToken = async (
-  userId: string,
-  role: "ADMIN" | "USER",
-) => {
+export const createAccessToken = async (userId: string, role: "ADMIN" | "USER") => {
   const minPayload = {
     sub: userId,
     role,
