@@ -2,7 +2,6 @@ import { db } from "@/config/db.js";
 import { Bookmark, NewBookmark } from "@/types/db.types.js";
 import { bookmarks as bookmarksTable } from "@drizzle/index.js";
 import { eq } from "drizzle-orm";
-import { id } from "zod/locales";
 
 export const findAllBookmarks = async (): Promise<Bookmark[]> => {
   const bookmarks = await db.query.bookmarks.findMany();
