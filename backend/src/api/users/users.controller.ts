@@ -125,6 +125,42 @@ export const updateUser = asyncFn<UserParams, {}, UserUpdateReq>(async (req, res
   successRes(res, 200, userWithoutPassword);
 });
 
+export const updateMe = asyncFn<{}, {}, UserBodyReq>(async (req, res, next) => {
+  const id = req.user?.id;
+  const { password, ...otherFields } = req.body;
+
+  if (!id) {
+    databaseLogger.error("User not found");
+    return next({ status: 404 });
+  }
+
+  const fieldsToUpdate: Partial<User> = {
+    ...otherFields,
+    id,
+    updatedAt: new Date(),
+  };
+
+  const hasFields = Object.keys(otherFields).length > 0 || password;
+
+  if (!hasFields) {
+    databaseLogger.warn("No fields to update");
+    return next({ status: 200 });
+  }
+
+  if (password) {
+    fieldsToUpdate.password = await hashPassword(password);
+  }
+
+  const updatedMe = await UserService.alterUser(id, fieldsToUpdate);
+  if (!updateMe) {
+    databaseLogger.error("Couldn't update user");
+    return next({ status: 500 });
+  }
+
+  databaseLogger.info(`You are updated`, updateMe);
+  successRes(res, 200, updatedMe);
+});
+
 export const deleteUser = asyncFn<UserParams>(async (req, res, next) => {
   const { id } = req.params;
 
