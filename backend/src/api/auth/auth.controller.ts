@@ -1,4 +1,4 @@
-import * as AuthService from "@/services/auth.service.js";
+import * as AuthService from "./auth.service.js";
 import { RefreshTokenBodyReq, UserBodyReq } from "@/types/db.types.js";
 import { authLogger } from "@/utils/logger.js";
 import { successRes } from "@/utils/messages.js";
@@ -21,10 +21,7 @@ export const signIn = asyncFn<{}, {}, UserBodyReq>(async (req, res, next) => {
 
   const { password: _, ...userWithoutPassword } = authenticated.user;
 
-  authLogger.info(
-    `User ${authenticated.user.username} authenticated`,
-    authenticated.user,
-  );
+  authLogger.info(`User ${authenticated.user.username} authenticated`, authenticated.user);
   successRes(res, 200, {
     user: userWithoutPassword,
     accessToken: authenticated.accessToken,
@@ -57,25 +54,23 @@ export const signUp = asyncFn<{}, {}, UserBodyReq>(async (req, res, next) => {
   });
 });
 
-export const refreshSign = asyncFn<{}, {}, RefreshTokenBodyReq>(
-  async (req, res, next) => {
-    const { tokenHash } = req.body;
+export const refreshSign = asyncFn<{}, {}, RefreshTokenBodyReq>(async (req, res, next) => {
+  const { tokenHash } = req.body;
 
-    if (!tokenHash) {
-      authLogger.error("Refresh token required");
-      return next({ status: 400 });
-    }
+  if (!tokenHash) {
+    authLogger.error("Refresh token required");
+    return next({ status: 400 });
+  }
 
-    const result = await AuthService.refresh(tokenHash);
-    if (!result) {
-      authLogger.error("Invalid or expired refresh token");
-      return next({ status: 401 });
-    }
+  const result = await AuthService.refresh(tokenHash);
+  if (!result) {
+    authLogger.error("Invalid or expired refresh token");
+    return next({ status: 401 });
+  }
 
-    authLogger.info("Token refreshed", JSON.stringify(result));
-    successRes(res, 200, {
-      accessToken: result.newAccessToken,
-      refreshToken: result.newRefreshToken,
-    });
-  },
-);
+  authLogger.info("Token refreshed", JSON.stringify(result));
+  successRes(res, 200, {
+    accessToken: result.newAccessToken,
+    refreshToken: result.newRefreshToken,
+  });
+});

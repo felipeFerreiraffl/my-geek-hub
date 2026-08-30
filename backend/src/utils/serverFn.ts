@@ -4,11 +4,7 @@ import { logger } from "./logger.js";
 
 export const middlewareFn =
   <P = {}, ResB = {}, ReqB = {}, Q = {}>(
-    fn: (
-      req: Request<P, ResB, ReqB, Q>,
-      res: Response,
-      next: NextFunction,
-    ) => void,
+    fn: (req: Request<P, ResB, ReqB, Q>, res: Response, next: NextFunction) => void,
   ) =>
   (req: Request<P, ResB, ReqB, Q>, res: Response, next: NextFunction) => {
     fn(req, res, next);
@@ -16,11 +12,7 @@ export const middlewareFn =
 
 export const asyncFn =
   <P = {}, ResB = {}, ReqB = {}, Q = {}>(
-    fn: (
-      req: Request<P, ResB, ReqB, Q>,
-      res: Response,
-      next: NextFunction,
-    ) => Promise<void>,
+    fn: (req: Request<P, ResB, ReqB, Q>, res: Response, next: NextFunction) => Promise<void>,
   ) =>
   (req: Request<P, ResB, ReqB, Q>, res: Response, next: NextFunction) => {
     fn(req, res, next).catch((error: unknown) => {

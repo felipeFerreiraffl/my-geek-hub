@@ -1,24 +1,14 @@
 import { db } from "@/config/db.js";
 import { REFRESH_EXPIRED_TIME } from "@/constants/numbers.js";
-import {
-  users as usersTable,
-  refreshTokens as refreshTokensTable,
-} from "@/db/drizzle/index.js";
-import {
-  createAccessToken,
-  createRefreshToken,
-  verifyRefreshToken,
-} from "@/libs/jwt.js";
+import { users as usersTable, refreshTokens as refreshTokensTable } from "@/db/drizzle/index.js";
+import { createAccessToken, createRefreshToken, verifyRefreshToken } from "@/libs/jwt.js";
 import { RefreshToken, User } from "@/types/db.types.js";
 import { hashPassword } from "@/utils/serverFn.js";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
 export const login = async (email: string, password: string) => {
-  const [user] = await db
-    .select()
-    .from(usersTable)
-    .where(eq(usersTable.email, email));
+  const [user] = await db.select().from(usersTable).where(eq(usersTable.email, email));
 
   if (!user) return null;
 
@@ -42,15 +32,8 @@ export const login = async (email: string, password: string) => {
   return { user, accessToken, refreshToken };
 };
 
-export const register = async (
-  email: string,
-  password: string,
-  username?: string,
-) => {
-  const [existingUser] = await db
-    .select()
-    .from(usersTable)
-    .where(eq(usersTable.email, email));
+export const register = async (email: string, password: string, username?: string) => {
+  const [existingUser] = await db.select().from(usersTable).where(eq(usersTable.email, email));
 
   if (existingUser) return null;
 
@@ -107,14 +90,9 @@ export const refresh = async (refreshToken: string) => {
   if (!matchedToken) return null;
   if (matchedToken.expiresAt < new Date()) return null;
 
-  await db
-    .delete(refreshTokensTable)
-    .where(eq(refreshTokensTable.id, matchedToken.id));
+  await db.delete(refreshTokensTable).where(eq(refreshTokensTable.id, matchedToken.id));
 
-  const [user] = await db
-    .select()
-    .from(usersTable)
-    .where(eq(usersTable.id, payload.sub));
+  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, payload.sub));
 
   if (!user) return null;
 

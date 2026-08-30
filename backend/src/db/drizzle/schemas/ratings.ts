@@ -24,7 +24,5 @@ export const ratings = pgTable(
       .notNull()
       .$onUpdateFn(() => new Date()),
   },
-  (table) => [
-    check("score_range", sql`${table.score} >= 1 AND ${table.score} <= 10`),
-  ],
+  (table) => [check("score_range", sql`${table.score} >= 1 AND ${table.score} <= 10`)],
 );
