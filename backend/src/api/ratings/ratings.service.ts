@@ -3,13 +3,25 @@ import { NewRating, Rating } from "@/types/db.types.js";
 import { ratings as ratingsTable } from "@drizzle/index.js";
 import { eq } from "drizzle-orm";
 
-export const getRatingById = async (id: string): Promise<Rating | null> => {
+export const findRatings = async (): Promise<Rating[]> => {
+  const ratings = await db.query.ratings.findMany();
+
+  return ratings ?? [];
+};
+
+export const findRatingById = async (id: string): Promise<Rating | null> => {
   const [rating] = await db.select().from(ratingsTable).where(eq(ratingsTable.id, id));
 
   return rating ?? null;
 };
 
-export const getRatingByBookmarkId = async (bookmarkId: string): Promise<Rating | null> => {
+export const findRatingsByUserId = async (userId: string): Promise<Rating[]> => {
+  const ratings = await db.select().from(ratingsTable).where(eq(ratingsTable.userId, userId));
+
+  return ratings ?? [];
+};
+
+export const findRatingByBookmarkId = async (bookmarkId: string): Promise<Rating | null> => {
   const [rating] = await db
     .select()
     .from(ratingsTable)
