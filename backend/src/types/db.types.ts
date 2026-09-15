@@ -58,3 +58,8 @@ export interface BookmarkParams {
   id: string;
   userId: string;
 }
+
+export interface RatingParams {
+  userId: string;
+  bookmarkId: string;
+}

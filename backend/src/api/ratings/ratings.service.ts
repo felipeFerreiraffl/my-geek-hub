@@ -3,13 +3,25 @@ import { NewRating, Rating } from "@/types/db.types.js";
 import { ratings as ratingsTable } from "@drizzle/index.js";
 import { eq } from "drizzle-orm";
 
-export const getRatingById = async (id: string): Promise<Rating | null> => {
+export const findRatings = async (): Promise<Rating[]> => {
+  const ratings = await db.query.ratings.findMany();
+
+  return ratings ?? [];
+};
+
+export const findRatingById = async (id: string): Promise<Rating | null> => {
   const [rating] = await db.select().from(ratingsTable).where(eq(ratingsTable.id, id));
 
   return rating ?? null;
 };
 
-export const getRatingByBookmarkId = async (bookmarkId: string): Promise<Rating | null> => {
+export const findRatingsByUserId = async (userId: string): Promise<Rating[]> => {
+  const ratings = await db.select().from(ratingsTable).where(eq(ratingsTable.userId, userId));
+
+  return ratings ?? [];
+};
+
+export const findRatingByBookmarkId = async (bookmarkId: string): Promise<Rating | null> => {
   const [rating] = await db
     .select()
     .from(ratingsTable)
@@ -34,10 +46,18 @@ export const alterRating = async (id: string, rating: Partial<Rating>): Promise<
   return newRating;
 };
 
-export const deleteRating = async (id: string): Promise<void> => {
+export const deleteRatingById = async (id: string): Promise<void> => {
   await db.delete(ratingsTable).where(eq(ratingsTable.id, id));
 };
 
-export const deleteRatingByBookmark = async (bookmarkId: string): Promise<void> => {
+export const deleteRatingsByUserId = async (userId: string): Promise<void> => {
+  await db.delete(ratingsTable).where(eq(ratingsTable.userId, userId));
+};
+
+export const deleteRatingByBookmarkId = async (bookmarkId: string): Promise<void> => {
   await db.delete(ratingsTable).where(eq(ratingsTable.bookmarkId, bookmarkId));
+};
+
+export const deleteAllRatings = async (): Promise<void> => {
+  await db.delete(ratingsTable);
 };
