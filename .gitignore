@@ -1,8 +1,25 @@
-# Geral
+# General
 */node_modules
-*/.env*
+*/.env
+*/.env.*
+!*/.env.example
+.env
+.env.*
+!.env.example
 */.vscode
 
+# Claude Code (local/personal settings — never shared, see docs)
+.claude/settings.local.json
+
+# GSD toolkit local state
+.claude/.gsd-staging/
+.claude/.gsd-profile
+.claude/gsd-install-state.json
+.claude/gsd-file-manifest.json
+.claude/gsd-core/.gsd-runtime
+
+# Graphify generated output
+graphify-out/
 
 # Backend
 */dist
