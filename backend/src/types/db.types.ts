@@ -29,7 +29,6 @@ export interface UserUpdateReq {
 
 export interface UserParams {
   id: string;
-  email: string;
 }
 
 export interface RefreshTokenBodyReq {
