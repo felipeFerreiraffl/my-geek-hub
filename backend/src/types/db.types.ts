@@ -58,7 +58,21 @@ export interface BookmarkParams {
   userId: string;
 }
 
+export interface RatingBodyReq {
+  userId: string;
+  bookmarkId: string;
+  score: number;
+
+  review?: string;
+}
+
+export interface UpdateRatingBodyReq {
+  score?: number;
+  review?: string;
+}
+
 export interface RatingParams {
+  id: string;
   userId: string;
   bookmarkId: string;
 }
