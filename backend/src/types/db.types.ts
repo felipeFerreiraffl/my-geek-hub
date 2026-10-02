@@ -38,16 +38,16 @@ export interface RefreshTokenBodyReq {
 
 export type BookmarkMediaType = "ANIME" | "MANGA" | "GAME";
 
-export type BookmarkStatus = "WATCHING" | "COMPLETED" | "PLANNED" | "PAUSED" | "DROPPED";
+export type BookmarkStatus = "IN_PROGRESS" | "COMPLETED" | "PLANNED" | "PAUSED" | "DROPPED";
 
 export interface BookmarkBodyReq {
   userId: string;
   status: BookmarkStatus;
   mediaType: BookmarkMediaType;
+  externalId: number;
 
   title?: string;
   imageUrl?: string;
-  externalId?: number;
 }
 
 export interface UpdateBookmarkBodyReq {

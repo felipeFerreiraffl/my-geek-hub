@@ -4,7 +4,7 @@ import { users } from "./users.js";
 export const mediaTypeEnum = pgEnum("media_type", ["ANIME", "MANGA", "GAME"]);
 
 export const bookmarkStatusEnum = pgEnum("bookmark_status", [
-  "WATCHING",
+  "IN_PROGRESS",
   "COMPLETED",
   "PLANNED",
   "PAUSED",

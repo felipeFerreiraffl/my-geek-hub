@@ -1,15 +1,14 @@
+import * as BookmarkService from "@/api/bookmarks/bookmarks.service.js";
+import * as UserService from "@/api/users/users.service.js";
 import {
   Bookmark,
   BookmarkBodyReq,
   BookmarkParams,
   UpdateBookmarkBodyReq,
-  UserParams,
 } from "@/types/db.types.js";
 import { databaseLogger } from "@/utils/logger.js";
 import { successRes } from "@/utils/messages.js";
 import { asyncFn } from "@/utils/serverFn.js";
-import * as UserService from "../users/users.service.js";
-import * as BookmarkService from "./bookmarks.service.js";
 
 export const getBookmarks = asyncFn(async (_, res, __) => {
   const bookmarks = await BookmarkService.findAllBookmarks();
@@ -24,7 +23,7 @@ export const getBookmarks = asyncFn(async (_, res, __) => {
   successRes(res, 200, bookmarks);
 });
 
-export const getBookmarksById = asyncFn<BookmarkParams>(async (req, res, next) => {
+export const getBookmarksById = asyncFn<Pick<BookmarkParams, "id">>(async (req, res, next) => {
   const { id } = req.params;
 
   const bookmark = await BookmarkService.findBookmarkById(id);
@@ -72,16 +71,31 @@ export const createBookmark = asyncFn<{}, {}, BookmarkBodyReq>(async (req, res, 
     return next({ status: 400 });
   }
 
+  if (!externalId) {
+    databaseLogger.error("External ID is required");
+    return next({ status: 400 });
+  }
+
   const existingUser = await UserService.findUserById(userId);
   if (!existingUser) {
     databaseLogger.error(`User ID ${userId} not found`);
     return next({ status: 404 });
   }
 
+  const existingBookmark = await BookmarkService.findBookmarkByExternalId(
+    userId,
+    externalId,
+    mediaType,
+  );
+  if (existingBookmark) {
+    databaseLogger.error(`Work ${externalId} (${mediaType}) already bookmarked by user ${userId}`);
+    return next({ status: 409 });
+  }
+
   const bookmarkReq: Bookmark = {
     id: crypto.randomUUID(),
     userId,
-    externalId: externalId ?? 0,
+    externalId,
     title: title ?? "",
     imageUrl: imageUrl ?? "",
     mediaType,
@@ -115,10 +129,25 @@ export const createMyBookmark = asyncFn<{}, {}, BookmarkBodyReq>(async (req, res
     return next({ status: 400 });
   }
 
+  if (!externalId) {
+    databaseLogger.error("External ID is required");
+    return next({ status: 400 });
+  }
+
+  const existingBookmark = await BookmarkService.findBookmarkByExternalId(
+    userId,
+    externalId,
+    mediaType,
+  );
+  if (existingBookmark) {
+    databaseLogger.error(`Work ${externalId} (${mediaType}) already bookmarked by user ${userId}`);
+    return next({ status: 409 });
+  }
+
   const bookmarkReq: Bookmark = {
     id: crypto.randomUUID(),
     userId,
-    externalId: externalId ?? 0,
+    externalId,
     title: title ?? "",
     imageUrl: imageUrl ?? "",
     mediaType,
@@ -133,37 +162,30 @@ export const createMyBookmark = asyncFn<{}, {}, BookmarkBodyReq>(async (req, res
   successRes(res, 201, newBookmark);
 });
 
-export const updateBookmark = asyncFn<BookmarkParams, {}, UpdateBookmarkBodyReq>(
+export const updateBookmark = asyncFn<Pick<BookmarkParams, "id">, {}, UpdateBookmarkBodyReq>(
   async (req, res, next) => {
-    const { id, userId } = req.params;
+    const { id } = req.params;
     const { status } = req.body;
 
-    if (!id) {
-      databaseLogger.error("ID is required");
-      return next({ status: 400 });
-    }
-
-    const existingUser = await UserService.findUserById(userId);
-    if (!existingUser) {
-      databaseLogger.error("User not found");
-      return next({ status: 404 });
-    }
-
-    const fieldsToUpdate: Partial<Bookmark> = {
-      userId,
-      status,
-      updatedAt: new Date(),
-    };
-
-    const hasFields = Object.keys(status).length > 0;
-    if (!hasFields) {
+    if (!status) {
       databaseLogger.error("No fields to update");
       return next({ status: 400 });
     }
 
+    const existingBookmark = await BookmarkService.findBookmarkById(id);
+    if (!existingBookmark) {
+      databaseLogger.error(`Bookmark ${id} not found`);
+      return next({ status: 404 });
+    }
+
+    const fieldsToUpdate: Partial<Bookmark> = {
+      status,
+      updatedAt: new Date(),
+    };
+
     const newBookmark = await BookmarkService.alterBookmark(id, fieldsToUpdate);
     if (!newBookmark) {
-      databaseLogger.info("Couldn't update bookmark");
+      databaseLogger.error("Couldn't update bookmark");
       return next({ status: 500 });
     }
 
@@ -172,62 +194,50 @@ export const updateBookmark = asyncFn<BookmarkParams, {}, UpdateBookmarkBodyReq>
   },
 );
 
-export const updateMyBookmark = asyncFn<BookmarkParams & UserParams, {}, UpdateBookmarkBodyReq>(
+export const updateMyBookmark = asyncFn<Pick<BookmarkParams, "id">, {}, UpdateBookmarkBodyReq>(
   async (req, res, next) => {
     const { id } = req.params;
     const userId = req.user?.id;
     const { status } = req.body;
 
-    if (!id) {
-      databaseLogger.error("ID is required");
-      return next({ status: 400 });
-    }
-
     if (!userId) {
-      databaseLogger.error(`Cannot find user with ID ${userId}`);
+      databaseLogger.error("User ID not found");
       return next({ status: 404 });
     }
 
-    const existingUser = await UserService.findUserById(userId);
-    if (!existingUser) {
-      databaseLogger.error("User not found");
-      return next({ status: 404 });
-    }
-
-    const fieldsToUpdate: Partial<Bookmark> = {
-      userId,
-      status,
-      updatedAt: new Date(),
-    };
-
-    const hasFields = Object.keys(status).length > 0;
-    if (!hasFields) {
+    if (!status) {
       databaseLogger.error("No fields to update");
       return next({ status: 400 });
     }
 
+    const existingBookmark = await BookmarkService.findBookmarkById(id);
+    if (!existingBookmark || existingBookmark.userId !== userId) {
+      databaseLogger.error(`Bookmark ${id} not found for your user`);
+      return next({ status: 404 });
+    }
+
+    const fieldsToUpdate: Partial<Bookmark> = {
+      status,
+      updatedAt: new Date(),
+    };
+
     const newBookmark = await BookmarkService.alterBookmark(id, fieldsToUpdate);
     if (!newBookmark) {
-      databaseLogger.info("Couldn't update bookmark");
+      databaseLogger.error("Couldn't update bookmark");
       return next({ status: 500 });
     }
 
-    databaseLogger.info(`Bookmark ${id} updated`, newBookmark);
+    databaseLogger.info(`Your bookmark ${id} updated`, newBookmark);
     successRes(res, 200, newBookmark);
   },
 );
 
-export const deleteBookmark = asyncFn<BookmarkParams>(async (req, res, next) => {
-  const { id, userId } = req.params;
+export const deleteBookmark = asyncFn<Pick<BookmarkParams, "id">>(async (req, res, next) => {
+  const { id } = req.params;
 
-  if (!id) {
-    databaseLogger.error("ID is required");
-    return next({ status: 400 });
-  }
-
-  const existingUser = await UserService.findUserById(userId);
-  if (!existingUser) {
-    databaseLogger.error(`User ${userId} not found`);
+  const existingBookmark = await BookmarkService.findBookmarkById(id);
+  if (!existingBookmark) {
+    databaseLogger.error(`Bookmark ${id} not found`);
     return next({ status: 404 });
   }
 
@@ -237,23 +247,18 @@ export const deleteBookmark = asyncFn<BookmarkParams>(async (req, res, next) => 
   successRes(res, 200, null);
 });
 
-export const deleteMyBookmark = asyncFn<BookmarkParams & UserParams>(async (req, res, next) => {
+export const deleteMyBookmark = asyncFn<Pick<BookmarkParams, "id">>(async (req, res, next) => {
   const { id } = req.params;
   const userId = req.user?.id;
-
-  if (!id) {
-    databaseLogger.error("ID is required");
-    return next({ status: 400 });
-  }
 
   if (!userId) {
     databaseLogger.error("User ID not found");
     return next({ status: 404 });
   }
 
-  const existingUser = await UserService.findUserById(userId);
-  if (!existingUser) {
-    databaseLogger.error(`User ${userId} not found`);
+  const existingBookmark = await BookmarkService.findBookmarkById(id);
+  if (!existingBookmark || existingBookmark.userId !== userId) {
+    databaseLogger.error(`Bookmark ${id} not found for your user`);
     return next({ status: 404 });
   }
 
@@ -270,37 +275,19 @@ export const deleteAllBookmarks = asyncFn(async (_, res, __) => {
   successRes(res, 200, null);
 });
 
-export const deleteAllBookmarksFromUser = asyncFn<BookmarkParams>(async (req, res, next) => {
-  const { userId } = req.params;
+export const deleteAllBookmarksFromUser = asyncFn<Pick<BookmarkParams, "userId">>(
+  async (req, res, next) => {
+    const { userId } = req.params;
 
-  const existingUser = await UserService.findUserById(userId);
-  if (!existingUser) {
-    databaseLogger.error(`User ${userId} not found`);
-    return next({ status: 404 });
-  }
+    const existingUser = await UserService.findUserById(userId);
+    if (!existingUser) {
+      databaseLogger.error(`User ${userId} not found`);
+      return next({ status: 404 });
+    }
 
-  await BookmarkService.deleteAllBookmarksByUserId(userId);
+    await BookmarkService.deleteAllBookmarksByUserId(userId);
 
-  databaseLogger.info(`All bookmarks from user ${userId} removed`);
-  successRes(res, 200, null);
-});
-
-export const deleteAllMyBookmarks = asyncFn<UserParams>(async (req, res, next) => {
-  const userId = req.user?.id;
-
-  if (!userId) {
-    databaseLogger.error("User ID not found");
-    return next({ status: 404 });
-  }
-
-  const existingUser = await UserService.findUserById(userId);
-  if (!existingUser) {
-    databaseLogger.error(`User ${userId} not found`);
-    return next({ status: 404 });
-  }
-
-  await BookmarkService.deleteAllBookmarksByUserId(userId);
-
-  databaseLogger.info(`All bookmarks from user ${userId} removed`);
-  successRes(res, 200, null);
-});
+    databaseLogger.info(`All bookmarks from user ${userId} removed`);
+    successRes(res, 200, null);
+  },
+);
