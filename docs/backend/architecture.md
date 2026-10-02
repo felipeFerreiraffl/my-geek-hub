@@ -59,7 +59,9 @@ and service file — there's no shared "generic CRUD" layer.
 1. Client sends `Authorization: Bearer <accessToken>`.
 2. `authenticateUser` middleware verifies the JWT and attaches the decoded payload
    to `req.user`.
-3. `authorize` (owner-or-self) or `authorizeAdminOnly` middleware gates the route.
+3. `authorizeSelfOrAdmin` (own user id or admin) or `authorizeAdminOnly` gates the
+   route when needed; `/me` routes skip this step and the controller checks
+   ownership of the resource.
 4. Controller → service → Drizzle query → response.
 
 ## Key abstractions

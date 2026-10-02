@@ -61,7 +61,5 @@ the source they test. No tests exist yet — see
 
 ## Current implementation status
 
-- `auth`, `users`, `bookmarks`: routes, controllers, and services implemented.
-- `ratings`: only the service layer exists (`ratings.service.ts`). The controller
-  and routes files are present but empty, and the feature is not yet mounted in
-  `src/app.ts`. Don't assume rating endpoints are reachable.
+- `auth`, `users`, `bookmarks`, `ratings`: routes, controllers, and
+  services implemented.
