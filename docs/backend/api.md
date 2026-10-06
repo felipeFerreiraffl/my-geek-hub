@@ -3,10 +3,13 @@
 Base path: `/api`. All bodies are JSON (`Content-Type: application/json`).
 Authenticated routes require `Authorization: Bearer <accessToken>`.
 
-Two authorization middlewares gate routes:
+Authorization works in three layers:
 
-- `authorize` — intended for "self or admin" access (e.g. a user acting on their
-  own resource).
+- `/me` routes only need `authenticateUser` — the user comes from the token.
+  Handlers that act on a single owned resource (`/me/:id`) check in the controller
+  that it belongs to the caller and return `404` otherwise.
+- `authorizeSelfOrAdmin` — allows the request when `req.params.id` is the caller's
+  own user id, or when the caller is an admin.
 - `authorizeAdminOnly` — restricted to `role: "ADMIN"`.
 
 ## Auth (`/api/auth`)
@@ -22,39 +25,56 @@ Two authorization middlewares gate routes:
 | Method | Path | Middleware | Description |
 |---|---|---|---|
 | GET | `/` | `authenticateUser`, `authorizeAdminOnly` | List all users |
-| GET | `/me` | `authenticateUser`, `authorize` | Get the current user |
+| GET | `/me` | `authenticateUser` | Get the current user |
 | GET | `/:id` | `authenticateUser`, `authorizeAdminOnly` | Get a user by id |
 | POST | `/` | `validateUser`, `authenticateUser`, `authorizeAdminOnly` | Create a user |
-| PUT | `/:id` | `authenticateUser`, `authorize` | Update a user by id |
-| PUT | `/me` | `authenticateUser`, `authorize` | Update the current user |
-| DELETE | `/:id` | `authenticateUser`, `authorize` | Delete a user by id |
+| PUT | `/me` | `authenticateUser` | Update the current user (cannot change `role`) |
+| PUT | `/:id` | `authenticateUser`, `authorizeSelfOrAdmin` | Update a user by id (only admins can change `role`) |
+| DELETE | `/:id` | `authenticateUser`, `authorizeSelfOrAdmin` | Delete a user by id |
 | DELETE | `/` | `authenticateUser`, `authorizeAdminOnly` | Delete all users |
+
+User responses never include the `password` hash.
 
 ## Bookmarks (`/api/bookmarks`)
 
 | Method | Path | Middleware | Description |
 |---|---|---|---|
 | GET | `/` | `authenticateUser`, `authorizeAdminOnly` | List all bookmarks |
-| GET | `/me` | `authenticateUser`, `authorize` | List the current user's bookmarks |
+| GET | `/me` | `authenticateUser` | List the current user's bookmarks |
 | GET | `/:id` | `authenticateUser`, `authorizeAdminOnly` | Get a bookmark by id |
 | POST | `/` | `authenticateUser`, `authorizeAdminOnly` | Create a bookmark for any user |
-| POST | `/me` | `authenticateUser`, `authorize` | Create a bookmark for the current user |
+| POST | `/me` | `authenticateUser` | Create a bookmark for the current user |
 | PUT | `/:id` | `authenticateUser`, `authorizeAdminOnly` | Update a bookmark by id |
-| PUT | `/me/:id` | `authenticateUser`, `authorize` | Update the current user's bookmark |
+| PUT | `/me/:id` | `authenticateUser` | Update the current user's bookmark |
 | DELETE | `/:id` | `authenticateUser`, `authorizeAdminOnly` | Delete a bookmark by id |
-| DELETE | `/me/:id` | `authenticateUser`, `authorize` | Delete the current user's bookmark |
-| DELETE | `/me` | `authenticateUser`, `authorize` | Delete all of the current user's bookmarks |
+| DELETE | `/me/:id` | `authenticateUser` | Delete the current user's bookmark |
+| DELETE | `/user/:userId` | `authenticateUser`, `authorizeAdminOnly` | Delete all bookmarks of a user |
 | DELETE | `/` | `authenticateUser`, `authorizeAdminOnly` | Delete all bookmarks (admin) |
 
-## Ratings — not yet exposed
+Creating a bookmark requires `status`, `mediaType`, and `externalId`; a work the
+user already bookmarked (same `externalId` + `mediaType`) returns `409`.
 
-`backend/src/api/ratings/` has a fully implemented **service** layer
-(`findRatings`, `findRatingById`, `findRatingsByUserId`, `findRatingByBookmarkId`,
-`createRating`, `alterRating`, `deleteRatingById`, `deleteRatingsByUserId`,
-`deleteRatingByBookmarkId`, `deleteAllRatings`), but `ratings.controller.ts` and
-`ratings.routes.ts` are still empty, and no rating router is mounted in
-`src/app.ts`. There is currently **no HTTP endpoint** for ratings — that's the
-natural next slice of backend work.
+## Ratings (`/api/ratings`)
+
+| Method | Path | Middleware | Description |
+|---|---|---|---|
+| GET | `/me` | `authenticateUser` | List the current user's ratings |
+| GET | `/me/bookmark/:bookmarkId` | `authenticateUser` | Get the current user's rating for a bookmark |
+| GET | `/` | `authenticateUser`, `authorizeAdminOnly` | List all ratings |
+| GET | `/user/:userId` | `authenticateUser`, `authorizeAdminOnly` | List a user's ratings |
+| GET | `/:id` | `authenticateUser`, `authorizeAdminOnly` | Get a rating by id |
+| POST | `/me` | `authenticateUser` | Rate one of the current user's bookmarks |
+| POST | `/` | `authenticateUser`, `authorizeAdminOnly` | Create a rating for any user |
+| PUT | `/me/:id` | `authenticateUser` | Update the current user's rating |
+| PUT | `/:id` | `authenticateUser`, `authorizeAdminOnly` | Update a rating by id |
+| DELETE | `/me/:id` | `authenticateUser` | Delete the current user's rating |
+| DELETE | `/user/:userId` | `authenticateUser`, `authorizeAdminOnly` | Delete all ratings of a user |
+| DELETE | `/:id` | `authenticateUser`, `authorizeAdminOnly` | Delete a rating by id |
+| DELETE | `/` | `authenticateUser`, `authorizeAdminOnly` | Delete all ratings (admin) |
+
+`score` must be an integer from 1 to 10 (`MIN_RATING_SCORE`/`MAX_RATING_SCORE`),
+`review` is optional. The bookmark must belong to the rated user, and a bookmark
+that already has a rating returns `409`.
 
 ## Not yet implemented
 

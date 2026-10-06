@@ -11,8 +11,13 @@ export const getUsers = asyncFn(async (_, res, __) => {
     databaseLogger.warn("No user found");
   }
 
-  databaseLogger.info(`${users.length !== 0 ? "All users found" : "No user was found"}`, users);
-  successRes(res, 200, users);
+  const usersWithoutPassword = users.map(({ password: _, ...user }) => user);
+
+  databaseLogger.info(
+    `${users.length !== 0 ? "All users found" : "No user was found"}`,
+    usersWithoutPassword,
+  );
+  successRes(res, 200, usersWithoutPassword);
 });
 
 export const getUserById = asyncFn<UserParams>(async (req, res, next) => {
@@ -25,8 +30,10 @@ export const getUserById = asyncFn<UserParams>(async (req, res, next) => {
     return next({ status: 404 });
   }
 
-  databaseLogger.info(`User ID ${id} found`, user);
-  successRes(res, 200, user);
+  const { password: _, ...userWithoutPassword } = user;
+
+  databaseLogger.info(`User ID ${id} found`, userWithoutPassword);
+  successRes(res, 200, userWithoutPassword);
 });
 
 export const getMe = asyncFn(async (req, res, next) => {
@@ -43,8 +50,10 @@ export const getMe = asyncFn(async (req, res, next) => {
     return next({ status: 404 });
   }
 
-  databaseLogger.info(`Seeing informations for your user`, userMe);
-  successRes(res, 200, userMe);
+  const { password: _, ...userWithoutPassword } = userMe;
+
+  databaseLogger.info(`Seeing informations for your user`, userWithoutPassword);
+  successRes(res, 200, userWithoutPassword);
 });
 
 export const createUser = asyncFn<{}, {}, UserBodyReq>(async (req, res, next) => {
@@ -84,11 +93,17 @@ export const createUser = asyncFn<{}, {}, UserBodyReq>(async (req, res, next) =>
 
 export const updateUser = asyncFn<UserParams, {}, UserUpdateReq>(async (req, res, next) => {
   const { id } = req.params;
-  const { password, ...otherFields } = req.body;
+  const { password, role, ...otherFields } = req.body as UserUpdateReq & Pick<User, "role">;
+  const isAdmin = req.user?.role === "ADMIN";
 
   if (!id) {
     databaseLogger.error("ID is required");
     return next({ status: 400 });
+  }
+
+  if (role && !isAdmin) {
+    databaseLogger.error("Only admins can change user roles");
+    return next({ status: 403 });
   }
 
   const existingUser = await UserService.findUserById(id);
@@ -99,10 +114,11 @@ export const updateUser = asyncFn<UserParams, {}, UserUpdateReq>(async (req, res
 
   const fieldsToUpdate: Partial<User> = {
     ...otherFields,
+    ...(role && { role }),
     updatedAt: new Date(),
   };
 
-  const hasFields = Object.keys(otherFields).length > 0 || password;
+  const hasFields = Object.keys(otherFields).length > 0 || password || role;
 
   if (!hasFields) {
     databaseLogger.error("No fields to update");
@@ -127,11 +143,16 @@ export const updateUser = asyncFn<UserParams, {}, UserUpdateReq>(async (req, res
 
 export const updateMe = asyncFn<{}, {}, UserBodyReq>(async (req, res, next) => {
   const id = req.user?.id;
-  const { password, ...otherFields } = req.body;
+  const { password, role, ...otherFields } = req.body;
 
   if (!id) {
     databaseLogger.error("User not found");
     return next({ status: 404 });
+  }
+
+  if (role) {
+    databaseLogger.error("Cannot change your own role");
+    return next({ status: 403 });
   }
 
   const fieldsToUpdate: Partial<User> = {
@@ -143,8 +164,8 @@ export const updateMe = asyncFn<{}, {}, UserBodyReq>(async (req, res, next) => {
   const hasFields = Object.keys(otherFields).length > 0 || password;
 
   if (!hasFields) {
-    databaseLogger.warn("No fields to update");
-    return next({ status: 200 });
+    databaseLogger.error("No fields to update");
+    return next({ status: 400 });
   }
 
   if (password) {
@@ -152,13 +173,15 @@ export const updateMe = asyncFn<{}, {}, UserBodyReq>(async (req, res, next) => {
   }
 
   const updatedMe = await UserService.alterUser(id, fieldsToUpdate);
-  if (!updateMe) {
+  if (!updatedMe) {
     databaseLogger.error("Couldn't update user");
     return next({ status: 500 });
   }
 
-  databaseLogger.info(`You are updated`, updateMe);
-  successRes(res, 200, updatedMe);
+  const { password: _, ...userWithoutPassword } = updatedMe;
+
+  databaseLogger.info(`You are updated`, userWithoutPassword);
+  successRes(res, 200, userWithoutPassword);
 });
 
 export const deleteUser = asyncFn<UserParams>(async (req, res, next) => {

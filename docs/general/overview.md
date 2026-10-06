@@ -23,8 +23,7 @@ them, and keep private notes about what they've watched, read, or played.
 - Account creation and JWT-based authentication (access + refresh tokens).
 - Creating, updating, and deleting bookmarks, scoped to the authenticated user or,
   for admins, any user.
-- Recording ratings/reviews (data layer only so far — see
-  [docs/backend/api.md](../backend/api.md) for current route coverage).
+- Rating (score 1–10) and reviewing bookmarked works, one rating per bookmark.
 
 **Planned:**
 

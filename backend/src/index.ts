@@ -1,6 +1,6 @@
 import app from "./app.js";
 import { connectDb } from "./config/db.js";
-import { NODE_ENV, PORT } from "./constants/dotenv.js";
+import { HOST, NODE_ENV, PORT } from "./constants/dotenv.js";
 
 const bootstrap = async (): Promise<void> => {
   await connectDb();
@@ -12,7 +12,7 @@ const bootstrap = async (): Promise<void> => {
       console.log(`• Port        →   ${PORT}`);
       console.log(`• PID         →   ${process.pid}`);
       console.groupEnd();
-      console.log(`\n Available on http://localhost:${PORT}`);
+      console.log(`\n Available on http://${HOST}:${PORT}`);
     });
   }
 };

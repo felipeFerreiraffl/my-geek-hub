@@ -4,6 +4,7 @@ import { errorHandler } from "./middlewares/handleError.middleware.js";
 import authRouter from "./api/auth/auth.routes.js";
 import userRouter from "./api/users/users.routes.js";
 import bookmarkRouter from "./api/bookmarks/bookmarks.routes.js";
+import ratingRouter from "./api/ratings/ratings.routes.js";
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/bookmarks", bookmarkRouter);
+app.use("/api/ratings", ratingRouter);
 
 app.use(errorHandler);
 

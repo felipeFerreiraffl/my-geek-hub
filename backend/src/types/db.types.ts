@@ -29,7 +29,6 @@ export interface UserUpdateReq {
 
 export interface UserParams {
   id: string;
-  email: string;
 }
 
 export interface RefreshTokenBodyReq {
@@ -38,16 +37,16 @@ export interface RefreshTokenBodyReq {
 
 export type BookmarkMediaType = "ANIME" | "MANGA" | "GAME";
 
-export type BookmarkStatus = "WATCHING" | "COMPLETED" | "PLANNED" | "PAUSED" | "DROPPED";
+export type BookmarkStatus = "IN_PROGRESS" | "COMPLETED" | "PLANNED" | "PAUSED" | "DROPPED";
 
 export interface BookmarkBodyReq {
   userId: string;
   status: BookmarkStatus;
   mediaType: BookmarkMediaType;
+  externalId: number;
 
   title?: string;
   imageUrl?: string;
-  externalId?: number;
 }
 
 export interface UpdateBookmarkBodyReq {
@@ -59,7 +58,21 @@ export interface BookmarkParams {
   userId: string;
 }
 
+export interface RatingBodyReq {
+  userId: string;
+  bookmarkId: string;
+  score: number;
+
+  review?: string;
+}
+
+export interface UpdateRatingBodyReq {
+  score?: number;
+  review?: string;
+}
+
 export interface RatingParams {
+  id: string;
   userId: string;
   bookmarkId: string;
 }

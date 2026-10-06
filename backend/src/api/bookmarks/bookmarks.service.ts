@@ -1,7 +1,7 @@
 import { db } from "@/config/db.js";
-import { Bookmark, NewBookmark } from "@/types/db.types.js";
+import { Bookmark, BookmarkMediaType, NewBookmark } from "@/types/db.types.js";
 import { bookmarks as bookmarksTable } from "@drizzle/index.js";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export const findAllBookmarks = async (): Promise<Bookmark[]> => {
   const bookmarks = await db.query.bookmarks.findMany();
@@ -18,6 +18,25 @@ export const findBookmarksByUserId = async (userId: string): Promise<Bookmark[]>
   const bookmarks = await db.select().from(bookmarksTable).where(eq(bookmarksTable.userId, userId));
 
   return bookmarks ?? [];
+};
+
+export const findBookmarkByExternalId = async (
+  userId: string,
+  externalId: number,
+  mediaType: BookmarkMediaType,
+): Promise<Bookmark | null> => {
+  const [bookmark] = await db
+    .select()
+    .from(bookmarksTable)
+    .where(
+      and(
+        eq(bookmarksTable.userId, userId),
+        eq(bookmarksTable.externalId, externalId),
+        eq(bookmarksTable.mediaType, mediaType),
+      ),
+    );
+
+  return bookmark ?? null;
 };
 
 export const createBookmark = async (bookmark: NewBookmark): Promise<NewBookmark> => {
