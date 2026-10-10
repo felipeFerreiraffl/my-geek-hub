@@ -5,6 +5,7 @@ import authRouter from "./api/auth/auth.routes.js";
 import userRouter from "./api/users/users.routes.js";
 import bookmarkRouter from "./api/bookmarks/bookmarks.routes.js";
 import ratingRouter from "./api/ratings/ratings.routes.js";
+import animesRouter from "./api/animes/animes.routes.js";
 
 const app = express();
 
@@ -15,6 +16,8 @@ app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/bookmarks", bookmarkRouter);
 app.use("/api/ratings", ratingRouter);
+
+app.use("/api/animes", animesRouter);
 
 app.use(errorHandler);
 
