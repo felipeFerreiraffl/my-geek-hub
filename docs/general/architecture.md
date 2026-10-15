@@ -15,7 +15,7 @@ Two independent applications, developed and deployed separately, talking over HT
                                                             └──────────────────────┘
 
                                                             ┌──────────────────────┐
-                                                            │ Jikan API / RAWG API │  (planned)
+                                                            │ Tenrai API / RAWG API│  (Tenrai anime via proxy; rest planned)
                                                             └──────────────────────┘
 ```
 
@@ -27,10 +27,12 @@ Two independent applications, developed and deployed separately, talking over HT
 - The two apps are **not** part of a monorepo/workspace: each has its own
   `package.json`, lockfile, and TypeScript config. There is no shared package
   between them today.
-- External catalogs (Jikan, RAWG) are planned data sources the backend will call
-  to resolve/search works; bookmarks already store an `externalId` +
-  `mediaType` pair designed to reference them, but no outbound integration exists
-  in the code yet.
+- External catalogs (Tenrai — a Jikan v4-compatible MyAnimeList API — and RAWG)
+  are the data sources the backend calls to resolve/search works; bookmarks store
+  an `externalId` + `mediaType` pair designed to reference them. Today only
+  Tenrai's anime endpoints are reachable,
+  through a rate-limited reverse proxy (`/api/animes`); manga and RAWG are not
+  integrated yet.
 
 ## Why two independent apps
 

@@ -76,7 +76,31 @@ user already bookmarked (same `externalId` + `mediaType`) returns `409`.
 `review` is optional. The bookmark must belong to the rated user, and a bookmark
 that already has a rating returns `409`.
 
+## Animes (`/api/animes`)
+
+Public reverse proxy to Tenrai (`https://api.tenrai.org/v1`, Jikan v4-compatible
+MyAnimeList API) — no auth. Query strings are forwarded as-is. Aliases map
+anime endpoints that live outside Tenrai's `/anime` path; any other subpath goes
+to `/anime`: `/api/animes?q=naruto` → `/v1/anime?q=naruto`, `/api/animes/1/full`
+→ `/v1/anime/1/full`.
+
+| Method | Path | Tenrai endpoint | Description |
+|---|---|---|---|
+| GET | `/top` | `/top/anime` | Top anime |
+| GET | `/season` | `/seasons/now` | Current season |
+| GET | `/season/upcoming` | `/seasons/upcoming` | Upcoming season |
+| GET | `/season/:year/:season` | `/seasons/:year/:season` | Given season (`winter`, `spring`, `summer`, `fall`) |
+| GET | `/schedule` | `/schedules` | Weekly broadcast schedule |
+| GET | `/random` | `/random/anime` | Random anime (sent with `Cache-Control: no-store`) |
+| * | `/*` | `/anime/*` | Any other anime endpoint |
+
+All routes pass through `tenraiPerSecondLimit` and `tenraiPerMinuteLimit`, both
+global (shared by all clients, since Tenrai limits this server's IP): 3 req/s and
+115 req/min, below Tenrai's public 4 req/s and 120 req/min. Exceeding them
+returns `429`; limits are reported in `RateLimit` / `RateLimit-Policy` headers.
+`Authorization` and `Cookie` headers are stripped before forwarding.
+
 ## Not yet implemented
 
 - JSON export of a user's bookmarks/ratings.
-- Search/browse endpoints backed by Jikan (anime/manga) or RAWG (games).
+- Search/browse endpoints for manga or RAWG (games).

@@ -17,6 +17,8 @@
 | JWT creation/verification (HS256) | `jose` |
 | Password hashing | `bcryptjs` |
 | HTTP security headers | `helmet` |
+| Reverse proxy to external APIs (Tenrai) | `http-proxy-middleware` |
+| Rate limiting | `express-rate-limit` |
 | PostgreSQL client (used by Drizzle) | `postgres` |
 | Schema/input validation | `zod` |
 | Logging | `pino` (+ `pino-pretty` in dev) |

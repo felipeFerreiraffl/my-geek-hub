@@ -41,6 +41,7 @@ and service file — there's no shared "generic CRUD" layer.
 | Controller | Parse request, call service, shape the response | `src/api/<feature>/<feature>.controller.ts` |
 | Service | Business logic, Drizzle queries | `src/api/<feature>/<feature>.service.ts` |
 | Data access | Connection, schema, query building | `src/config/db.ts`, `src/db/drizzle/` |
+| External API proxy | Rate-limited reverse proxy to Tenrai; no controller/service | `src/api/animes/animes.proxy.ts`, `src/config/rateLimit.ts` |
 | Middleware | Auth, validation, error handling | `src/middlewares/` |
 | Utilities | Logger, response helpers, async wrappers | `src/utils/`, `src/libs/` |
 
@@ -100,8 +101,9 @@ way.
 
 ## Entry point
 
-`src/index.ts` calls `connectDb()` then starts the Express app on `PORT`
-(`bootstrap()`). Triggered via `npm run dev` (with `tsx`) or `npm start` (compiled
+`src/index.ts` calls `connectDb()`, then `checkProxy()` (`src/config/proxy.ts`, a
+dev-only, non-fatal reachability check of the proxied upstream APIs), then starts
+the Express app on `PORT` (`bootstrap()`). Triggered via `npm run dev` (with `tsx`) or `npm start` (compiled
 output).
 
 ## Where to add new code
