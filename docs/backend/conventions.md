@@ -5,8 +5,10 @@
 **Files:**
 
 - `<feature>.routes.ts` / `.controller.ts` / `.service.ts` — one triplet per feature
-  under `src/api/<feature>/`. Pure proxy features (`animes`) use
-  `<feature>.routes.ts` + `<feature>.proxy.ts` instead.
+  under `src/api/<feature>/`. Pure proxy features live under
+  `src/api/proxy/<target>/` instead: one `<target>.proxy.ts` factory per external
+  API (e.g. `tenrai.proxy.ts`) and one `<scope>/<scope>.routes.ts` per exposed scope
+  (e.g. `animes/animes.routes.ts`).
 - `<name>.middleware.ts`, `<domain>.types.ts` — descriptive, always with the layer
   suffix.
 - Utilities under `src/utils/` and `src/libs/` use plain descriptive camelCase

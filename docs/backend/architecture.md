@@ -41,7 +41,7 @@ and service file — there's no shared "generic CRUD" layer.
 | Controller | Parse request, call service, shape the response | `src/api/<feature>/<feature>.controller.ts` |
 | Service | Business logic, Drizzle queries | `src/api/<feature>/<feature>.service.ts` |
 | Data access | Connection, schema, query building | `src/config/db.ts`, `src/db/drizzle/` |
-| External API proxy | Rate-limited reverse proxy to Tenrai; no controller/service | `src/api/animes/animes.proxy.ts`, `src/config/rateLimit.ts` |
+| External API proxy | Rate-limited reverse proxy to external APIs (Tenrai); no controller/service | `src/api/proxy/<target>/<target>.proxy.ts`, `src/api/proxy/<target>/<scope>/<scope>.routes.ts`, `src/config/rateLimit.ts`, `src/config/proxy.ts` |
 | Middleware | Auth, validation, error handling | `src/middlewares/` |
 | Utilities | Logger, response helpers, async wrappers | `src/utils/`, `src/libs/` |
 
@@ -119,6 +119,24 @@ output).
 **New endpoint in an existing feature:** add the route in
 `<feature>.routes.ts`, the handler in `<feature>.controller.ts`, and the query in
 `<feature>.service.ts`, applying whatever auth/validation middleware the route needs.
+
+**New external-API proxy scope (e.g. Tenrai `mangas`):** proxy code is grouped by
+target, then by scope:
+
+```
+src/api/proxy/
+└── tenrai/
+    ├── tenrai.proxy.ts          # proxy factory (target URL, header stripping, caching)
+    └── animes/animes.routes.ts  # scope routes, path rewrites, rate limiters
+```
+
+1. Reuse the target's factory (`tenraiProxy`) or add
+   `src/api/proxy/<target>/<target>.proxy.ts` for a new target.
+2. `src/api/proxy/<target>/<scope>/<scope>.routes.ts` — routes and path rewrites,
+   behind the target's limiters from `src/config/rateLimit.ts` (scopes of the same
+   target share them).
+3. Mount it in `src/app.ts`: `app.use("/api/<scope>", <scope>Router)`.
+4. Add a startup probe entry in `src/config/proxy.ts`.
 
 **New database table:** schema file → export from `db/drizzle/index.ts` → relations
 → `npm run db:push` (dev) or `db:generate` + `db:migrate` → types in `db.types.ts`.
