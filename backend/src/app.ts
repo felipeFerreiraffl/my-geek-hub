@@ -5,7 +5,7 @@ import authRouter from "./api/auth/auth.routes.js";
 import userRouter from "./api/users/users.routes.js";
 import bookmarkRouter from "./api/bookmarks/bookmarks.routes.js";
 import ratingRouter from "./api/ratings/ratings.routes.js";
-import animesRouter from "./api/animes/animes.routes.js";
+import animesRouter from "./api/proxy/tenrai/animes/animes.routes.js";
 
 const app = express();
 

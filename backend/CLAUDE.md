@@ -18,6 +18,10 @@ Feature-based, layered MVC. Each feature under `src/api/<feature>/` has three fi
 <feature>.service.ts      Business logic + Drizzle queries, no req/res
 ```
 
+Exception: reverse proxies to external APIs live under `src/api/proxy/<target>/`
+(`<target>.proxy.ts` factory + `<scope>/<scope>.routes.ts`), with no controller or
+service. Use the `proxy-route` skill to add a new scope.
+
 Other directories: `config/` (db + env setup), `constants/`, `db/drizzle/` (schemas +
 relations), `libs/` (JWT), `middlewares/` (auth, validation, error handling),
 `types/`, `utils/` (logger, response helpers, async wrappers).

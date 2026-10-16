@@ -1,6 +1,6 @@
 import { tenraiPerMinuteLimit, tenraiPerSecondLimit } from "@/config/rateLimit.js";
 import { Router } from "express";
-import { tenraiProxy } from "./animes.proxy.js";
+import { tenraiProxy } from "../tenrai.proxy.js";
 
 const animesRouter = Router();
 

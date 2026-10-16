@@ -1,7 +1,5 @@
 import rateLimit, { Options } from "express-rate-limit";
 
-// Tenrai public tier: 120 req/min and 4 req/s per IP (https://api.tenrai.org/documentation)
-// Kept slightly below it, and keyed globally since Tenrai limits this server's IP
 const tenraiLimitOptions: Partial<Options> = {
   keyGenerator: () => "tenrai",
   standardHeaders: "draft-8",
