@@ -49,3 +49,4 @@ The library only stores a reference to the work (external ID and media type), it
 
 - [architecture.md](architecture.md) — how the project is organized and how the apps communicate.
 - [convention.md](convention.md) — language, commits, branches and secrets.
+- [backend/](backend/) — backend architecture, stack and conventions.

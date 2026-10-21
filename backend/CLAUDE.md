@@ -22,15 +22,17 @@ Exception: reverse proxies to external APIs live under `src/api/proxy/<target>/`
 (`<target>.proxy.ts` factory + `<scope>/<scope>.routes.ts`), with no controller or
 service. Use the `proxy-route` skill to add a new scope.
 
-Other directories: `config/` (db + env setup), `constants/`, `db/drizzle/` (schemas +
+Other directories: `config/` (db, env, rate limits, proxy probes), `constants/`, `db/drizzle/` (schemas +
 relations), `libs/` (JWT), `middlewares/` (auth, validation, error handling),
 `types/`, `utils/` (logger, response helpers, async wrappers).
 
-Full breakdown and "where to add new code" guidance:
+Full breakdown of each folder:
 [../docs/backend/architecture.md](../docs/backend/architecture.md).
 
-## Conventions (see [../docs/backend/conventions.md](../docs/backend/conventions.md) for full detail)
+## Conventions (see [../docs/backend/convention.md](../docs/backend/convention.md) for full detail)
 
+- File names are camelCase with a role suffix (`handleError.middleware.ts`,
+  `bookmarks.service.ts`); module-level fixed values are `SCREAMING_SNAKE`.
 - Imports use the `@/*` alias (`@/config/db.js`) and always include the `.js`
   extension — this is an ESM project, not CommonJS.
 - Services are imported as a namespace: `import * as UserService from "@/api/users/users.service.js"`.
@@ -47,8 +49,8 @@ Full breakdown and "where to add new code" guidance:
 ## Database
 
 Drizzle ORM against PostgreSQL. Schemas in `src/db/drizzle/schemas/`, relations in
-`src/db/drizzle/relations.ts`. Workflow and table reference:
-[../docs/backend/database.md](../docs/backend/database.md).
+`src/db/drizzle/relations.ts`, migrations in `drizzle/`. Folder overview:
+[../docs/backend/architecture.md](../docs/backend/architecture.md).
 
 ```bash
 npm run db:generate   # generate a migration from schema changes
@@ -60,10 +62,10 @@ npm run db:studio     # open Drizzle Studio
 ## Testing
 
 Node's built-in test runner (`node --test`), files named `*.test.ts` co-located with
-the source they test. No tests exist yet — see
-[../docs/backend/testing.md](../docs/backend/testing.md) before adding the first ones.
+the source they test. No tests exist yet — ask before setting up the first ones.
 
 ## Current implementation status
 
 - `auth`, `users`, `bookmarks`, `ratings`: routes, controllers, and
   services implemented.
+- Proxy: Tenrai `animes` scope implemented; Tenrai mangas and RAWG games coming soon.

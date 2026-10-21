@@ -1,6 +1,6 @@
 # Code conventions
 
-Explanation about the general conventions on the project, regardless of being backend or frontend scoped. Specific conventions for each app (naming, imports, error handling) will live in `backend/docs/convention.md` and `frontend/docs/convention.md` (coming soon).
+Explanation about the general conventions on the project, regardless of being backend or frontend scoped. Specific conventions for each app (naming, imports, error handling) live in [backend/convention.md](backend/convention.md) and `frontend/convention.md` (coming soon).
 
 ## Language
 

@@ -47,6 +47,8 @@ routes → controller → service → database
 
 Current features: `auth`, `users`, `bookmarks` and `ratings`.
 
+Full breakdown of each folder: [backend/architecture.md](backend/architecture.md).
+
 Other folders in `backend/src/`:
 
 | Folder | Content |

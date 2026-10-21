@@ -47,15 +47,14 @@ related to the change:
 
 | Change involves | Likely doc |
 |---|---|
-| New/changed Express route, request/response shape | `docs/backend/api.md` |
-| New DB table, column, or migration | `docs/backend/database.md` |
-| New env var, dependency, or stack choice | `docs/backend/stack.md` |
-| New layering pattern, naming rule, error-handling or logging convention (backend) | `docs/backend/conventions.md` |
-| Backend data flow / how routes-controller-service-db fit together | `docs/backend/architecture.md` |
-| New test pattern or testing tool | `docs/backend/testing.md` |
-| New top-level directory, cross-app concern, or change to how backend/frontend relate | `docs/general/architecture.md` |
-| Repo-wide convention (git flow, branch naming, repo layout) | `docs/general/conventions.md` |
-| Project purpose/domain/scope | `docs/general/overview.md` |
+| New feature or proxy scope, feature status change | `docs/overview.md` (features table), `docs/architecture.md` (features list, proxy table) |
+| New/renamed folder or file role in `backend/src/`, new DB table or `drizzle/` change | `docs/backend/architecture.md` |
+| New env var, dependency, npm script, or stack choice | `docs/backend/stack.md` |
+| New layering pattern, naming rule, file suffix, error-handling or logging convention (backend) | `docs/backend/convention.md` |
+| New top-level directory, cross-app concern, or change to how backend/frontend relate | `docs/architecture.md` |
+| Repo-wide convention (language, git flow, branch naming, secrets) | `docs/convention.md` |
+| Project purpose/domain/scope | `docs/overview.md` |
+| Route list, request/response shape, DB columns, tests | No dedicated doc today (`api.md`, `database.md`, `testing.md` were removed). Don't recreate them unprompted — ask the user if the change seems to need one. |
 | Frontend code (routes, components, conventions) | None of the above yet — `frontend/` is an unbuilt scaffold. Don't invent frontend doc content ahead of real code; if the change is the *first* real frontend feature, flag that a frontend doc likely needs to be created and ask the user rather than drafting one from scratch. |
 
 A single change often maps to zero, one, or two docs — not all of them. If nothing in
@@ -143,7 +142,7 @@ End with an explicit summary, not a vague "docs look fine":
 - If you edited docs: list each file changed and, in one line each, what changed and
   why (tie it back to the code change that motivated it).
 - If nothing needed updating: say so explicitly and name what you checked — e.g. "Checked
-  `docs/backend/api.md` and `docs/backend/database.md` against the new bookmarks route
+  `docs/overview.md` and `docs/backend/architecture.md` against the new bookmarks route
   and migration; both already describe this correctly, no changes made."
 
 Never leave it implicit whether docs were reviewed.

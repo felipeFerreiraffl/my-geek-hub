@@ -16,9 +16,9 @@ before writing anything, since it may have evolved since this skill was written:
 - `backend/src/config/proxy.ts` — dev-only startup probes
 - `backend/src/constants/api.ts` — upstream base URLs
 - `backend/src/app.ts` — router mounts
-- `docs/backend/api.md` (Animes section) and `docs/backend/architecture.md`
+- `docs/architecture.md` (Proxy section) and `docs/backend/architecture.md`
 
-All code, comments and docs are written in English. Follow `docs/backend/conventions.md`
+All code, comments and docs are written in English. Follow `docs/backend/convention.md`
 (`@/*` alias, `.js` extensions, no barrel files, `proxyLogger` instead of `console.*`
 outside `config/proxy.ts`).
 
@@ -212,12 +212,10 @@ claiming it works.
 
 Run the `doc-reviewer` skill. Expect at least:
 
-- `docs/backend/api.md` — a `## <Scope> (/api/<scope>)` section in the Animes style:
-  upstream + auth note, alias table (method · local path · upstream endpoint · description),
-  limiter values vs. official limits, stripped headers. Update "Not yet implemented".
-- `docs/backend/architecture.md` / `docs/general/architecture.md` — the External API
-  proxy row and integration status.
-- `docs/backend/stack.md` — any new env var.
+- `docs/architecture.md` — the Proxy section tree and the Target/Scope/Status table.
+- `docs/overview.md` — the "Search" feature status and the content source table.
+- `docs/backend/architecture.md` — the `api/proxy/` tree, only if a new target was added.
+- `docs/backend/stack.md` — any new env var or dependency.
 
 ## Report
 
