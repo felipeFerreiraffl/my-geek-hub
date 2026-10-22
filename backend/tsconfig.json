@@ -1,12 +1,13 @@
 {
   "extends": "@tsconfig/node-lts/tsconfig.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
+    "noEmit": true,
+    "rootDir": "../",
 
     "paths": {
       "@/*": ["./src/*"],
-      "@drizzle/*": ["./src/db/drizzle/*"]
+      "@drizzle/*": ["./src/db/drizzle/*"],
+      "@shared/*": ["../shared/*"]
     },
 
     "types": ["node"]
