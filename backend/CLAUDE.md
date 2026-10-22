@@ -69,4 +69,4 @@ the source they test. No tests exist yet — ask before setting up the first one
 
 - `auth`, `users`, `bookmarks`, `ratings`: routes, controllers, and
   services implemented.
-- Proxy: Tenrai `animes` scope implemented; Tenrai mangas and RAWG games coming soon.
+- Proxy: Tenrai `animes` and `mangas` scopes implemented; RAWG games coming soon.

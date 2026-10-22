@@ -68,6 +68,7 @@ Folder names are lowercase. Feature folders are plural, and every file inside st
 | `.controller.ts` | Request handlers. | `bookmarks.controller.ts` |
 | `.service.ts` | Business logic and queries. | `bookmarks.service.ts` |
 | `.proxy.ts` | Proxy factory of an external API. | `tenrai.proxy.ts` |
+| `.helpers.ts` | Helpers shared by the scopes of one proxy target. | `tenrai.helpers.ts` |
 | `.middleware.ts` | Middlewares. | `auth.middleware.ts` |
 | `.types.ts` | Types. | `db.types.ts` |
 | `.d.ts` | Type declarations for libraries. | `express.d.ts` |
@@ -92,8 +93,11 @@ Each folder in `src/api/` has **one scope**, and the files depend on the kind of
   ```txt
   api/proxy/tenrai/
   ├── tenrai.proxy.ts
-  └── animes/
-      └── animes.routes.ts
+  ├── tenrai.helpers.ts
+  ├── animes/
+  │   └── animes.routes.ts
+  └── mangas/
+      └── mangas.routes.ts
   ```
 
 After creating the router, mount it in `app.ts` under `/api/<scope>`.

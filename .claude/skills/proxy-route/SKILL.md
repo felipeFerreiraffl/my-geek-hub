@@ -147,13 +147,14 @@ factory. Structure, as in `animes.routes.ts`:
    (`/season/upcoming` before `/season/:year/:season`).
 3. Per-route overrides through `options.on` (e.g. `/random` → `cache-control: no-store`
    for non-cacheable responses).
-4. A final catch-all `router.use(<target>Proxy(to<Target><Scope>Path))` mapping any other
-   subpath onto the scope's upstream root, if the upstream has one.
+4. A final catch-all `router.use(<target>Proxy(to<Target>Path("/<upstream-root>")))` mapping
+   any other subpath onto the scope's upstream root, if the upstream has one.
 
 If the scope is simple (one upstream root, no aliases), the file may be just the
-limiters + catch-all. If a helper like `fromPrefix` is needed by a second scope of the
-same target, move it to `api/proxy/<target>/<target>.helpers.ts` instead of duplicating
-it — and ask before moving it into a generic place shared across targets.
+limiters + catch-all. Tenrai's path helpers (`fromPrefix`, `toTenraiPath`) live in
+`api/proxy/tenrai/tenrai.helpers.ts`. For a new target, keep helpers in its routes file
+until a second scope needs them, then move them to `<target>.helpers.ts`. Ask before
+moving any helper into a generic place shared across targets.
 
 Query strings are forwarded as-is; don't re-validate them unless the user asks.
 
@@ -168,8 +169,10 @@ Zod schemas describe the upstream contract. The proxy stays a **transparent stre
 it does not parse responses. Consumers (frontend, or a backend service later) call
 `.safeParse` when they need runtime validation.
 
-Location: repo-root `shared/<target>/<scope>.schema.ts` (+ `shared/<target>/common.schema.ts`
-for pieces reused across scopes of the same target, such as pagination or image sets).
+Location: repo-root `shared/schemas/<target>/<entity>.schema.ts`, singular like
+`user.schema.ts` (e.g. `shared/schemas/tenrai/manga.schema.ts`), plus
+`shared/schemas/<target>/common.schema.ts` for pieces reused across scopes of the same
+target, such as pagination or image sets.
 
 - Build the schemas **completely from the official docs** for every exposed endpoint:
   item schemas, list/paginated wrappers, nested objects, enums for documented closed
@@ -182,18 +185,12 @@ for pieces reused across scopes of the same target, such as pagination or image 
 - One response wrapper per endpoint family, e.g. `AnimeResponseSchema` (`{ data }`),
   `AnimeListResponseSchema` (`{ data: [], pagination }`).
 
-**First use of `shared/`** (the folder doesn't exist yet): this introduces a cross-app
-location, which the root `CLAUDE.md` says to confirm with the maintainer. Ask before
-creating it and before wiring it into either app. Points to raise in that question:
+`shared/` is already wired: `zod` resolves from the root `package.json`, and the
+backend imports it through the `@shared/*` alias (`rootDir: "../"`). The frontend isn't
+wired yet; ask before adding its alias.
 
-- `zod` must resolve from `shared/` (no `node_modules` there): options are a minimal
-  `shared/package.json` with `zod`, or each app aliasing it — pick with the user.
-- Backend `tsconfig.json` has `rootDir: ./src`, so importing `../shared` breaks `tsc`;
-  the backend only needs this once a service imports a schema.
-- Frontend (Next.js) needs a `@shared/*` path alias and may need its bundler to allow
-  files outside the project root.
-
-Once wired, later runs just add files under `shared/<target>/`.
+To check the schemas without a consumer, `.safeParse` a few real responses fetched
+through the local proxy (Step 5) with a throwaway `tsx` script in the scratchpad.
 
 ## Step 5: Verify
 

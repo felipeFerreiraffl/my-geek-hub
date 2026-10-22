@@ -71,8 +71,11 @@ The proxy is the exception to the layers above: it has **no controller or servic
 backend/src/api/proxy/
 └── tenrai/
     ├── tenrai.proxy.ts        Proxy factory for the Tenrai API
-    └── animes/
-        └── animes.routes.ts   Routes mounted at /api/animes
+    ├── tenrai.helpers.ts      Path helpers shared by the Tenrai scopes
+    ├── animes/
+    │   └── animes.routes.ts   Routes mounted at /api/animes
+    └── mangas/
+        └── mangas.routes.ts   Routes mounted at /api/mangas
 ```
 
 - Each external API is a **target** (e.g. `tenrai`), and each media type is a **scope** (e.g. `animes`).
@@ -82,7 +85,7 @@ backend/src/api/proxy/
 | Target | Scope | Status |
 |---|---|---|
 | Tenrai (MyAnimeList data) | Animes | Implemented |
-| Tenrai (MyAnimeList data) | Mangas | Coming soon |
+| Tenrai (MyAnimeList data) | Mangas | Implemented |
 | RAWG | Games | Coming soon |
 
 ## Frontend

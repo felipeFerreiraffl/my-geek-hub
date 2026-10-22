@@ -1,12 +1,9 @@
 import { tenraiPerMinuteLimit, tenraiPerSecondLimit } from "@/config/rateLimit.js";
 import { Router } from "express";
 import { tenraiProxy } from "../tenrai.proxy.js";
+import { fromPrefix, toTenraiPath } from "../tenrai.helpers.js";
 
 const animesRouter = Router();
-
-const toTenraiAnimePath = (path: string) => "/anime" + path.replace(/^\/(?=\?|$)/, "");
-const fromPrefix = (localPrefix: string, tenraiPrefix: string) => (path: string) =>
-  tenraiPrefix + path.slice(localPrefix.length);
 
 animesRouter.use(tenraiPerSecondLimit, tenraiPerMinuteLimit);
 
@@ -29,6 +26,6 @@ animesRouter.get(
   }),
 );
 
-animesRouter.use(tenraiProxy(toTenraiAnimePath));
+animesRouter.use(tenraiProxy(toTenraiPath("/anime")));
 
 export default animesRouter;

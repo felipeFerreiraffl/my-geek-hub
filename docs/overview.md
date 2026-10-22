@@ -13,7 +13,7 @@ General explanation of what My Geek Hub is and what it does.
 | Account | Sign up, sign in and session with JWT tokens. | Implemented |
 | Bookmarks | Save a work in the personal library with a status. | Implemented |
 | Ratings | Give a personal rating and review to a work. | Implemented |
-| Search | Find animes, mangas and games through the reverse proxy. | Animes only |
+| Search | Find animes, mangas and games through the reverse proxy. | Animes and mangas |
 | Export | Download the library data as JSON. | Coming soon |
 
 ### Bookmark status
@@ -35,14 +35,14 @@ The works are not created by the users: they come from external APIs, accessed t
 | Media | Source |
 |---|---|
 | Animes | [Tenrai](https://api.tenrai.org/v1) (MyAnimeList data, Jikan-compatible) |
-| Mangas | Tenrai (coming soon) |
+| Mangas | [Tenrai](https://api.tenrai.org/v1) |
 | Games | [RAWG](https://rawg.io/apidocs) (coming soon) |
 
 The library only stores a reference to the work (external ID and media type), its title and image. The full details are always fetched from the external API.
 
 ## Status of the apps
 
-- **Backend:** actively developed — account, bookmarks, ratings and anime proxy implemented.
+- **Backend:** actively developed — account, bookmarks, ratings and anime/manga proxy implemented.
 - **Frontend:** not implemented yet.
 
 ## Next reads

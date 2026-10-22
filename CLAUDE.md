@@ -9,7 +9,7 @@ bookmark works with a personal status (watching, completed, planned, paused, dro
 attach a personal rating/review, and (planned) export their data as JSON. Users
 search and discover works through a backend reverse proxy to the **Tenrai API**
 (anime/manga, MyAnimeList data, Jikan-compatible) and the **RAWG API** (games) — only
-the Tenrai anime scope is implemented so far.
+the Tenrai anime and manga scopes are implemented so far.
 
 ## Repository layout
 

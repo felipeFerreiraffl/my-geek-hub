@@ -60,8 +60,11 @@ api/bookmarks/
 api/proxy/
 └── tenrai/                    Target: the external API
     ├── tenrai.proxy.ts        Proxy factory (URL, headers, cache)
-    └── animes/                Scope: the media type
-        └── animes.routes.ts   Routes mounted at /api/animes
+    ├── tenrai.helpers.ts      Path helpers shared by its scopes
+    ├── animes/                Scope: the media type
+    │   └── animes.routes.ts   Routes mounted at /api/animes
+    └── mangas/
+        └── mangas.routes.ts   Routes mounted at /api/mangas
 ```
 
 - **Target** → the external API (e.g. `tenrai`). Its `<target>.proxy.ts` holds the shared setup for every scope.

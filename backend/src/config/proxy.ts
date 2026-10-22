@@ -19,6 +19,14 @@ const probes: Probe[] = [
     limits: "3 req/s ‧ 115 req/min (global)",
     sample: (body) => `${body.data.title} (mal_id ${body.data.mal_id})`,
   },
+  {
+    name: "Tenrai ‧ Mangas",
+    target: TENRAI_API_URL,
+    routes: "/api/mangas/*",
+    path: "/manga/1",
+    limits: "3 req/s ‧ 115 req/min (global)",
+    sample: (body) => `${body.data.title} (mal_id ${body.data.mal_id})`,
+  },
 ];
 
 const PROBE_TIMEOUT_MS = 5000;
