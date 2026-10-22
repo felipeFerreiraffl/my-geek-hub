@@ -33,7 +33,8 @@ Full breakdown of each folder:
 
 - File names are camelCase with a role suffix (`handleError.middleware.ts`,
   `bookmarks.service.ts`); module-level fixed values are `SCREAMING_SNAKE`.
-- Imports use the `@/*` alias (`@/config/db.js`) and always include the `.js`
+- Imports use the `@/*` alias (`@/config/db.js`), or `@shared/*` for the root `shared/`
+  folder, and always include the `.js`
   extension — this is an ESM project, not CommonJS.
 - Services are imported as a namespace: `import * as UserService from "@/api/users/users.service.js"`.
 - No barrel files (`index.ts` re-exports) inside `api/`.

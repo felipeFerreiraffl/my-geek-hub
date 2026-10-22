@@ -8,6 +8,7 @@ Explanation of the project organization and how both apps communicate with each 
 my-geek-hub/
 ├── backend/        Express REST API
 ├── frontend/       Next.js app
+├── shared/         Zod schemas and types used by both apps
 ├── docs/           Project documentation (this folder)
 ├── .claude/        AI tooling: skills, hooks, subagents and commands
 ├── .planning/      AI workflow artifacts (GSD)
@@ -15,6 +16,7 @@ my-geek-hub/
 
 - `backend/` → Express REST API with TypeScript.
 - `frontend/` → Next.js app.
+- `shared/` → Zod schemas and types used by both apps. `zod` is installed in the root `package.json` (the only root dependency), so both apps resolve the same copy. Not a workspace.
 - `.claude/` and `.planning/` → AI implementation to optimize the development process (see [AI in the project](#ai-in-the-project)).
 
 ## How they communicate

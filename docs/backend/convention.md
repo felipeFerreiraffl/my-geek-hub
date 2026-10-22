@@ -111,7 +111,8 @@ A new route goes in `app.ts`. A new startup check (e.g. a new connection) goes i
 
 ### Imports
 
-- Use the `@/*` alias instead of relative paths: `@/config/db.js`.
+- Use the `@/*` alias instead of relative paths: `@/config/db.js`. Code from the root `shared/` folder uses `@shared/*`: `@shared/schemas/user.schema.js`.
+- Import Zod as `import { z } from "zod"`.
 - Always use the `.js` extension, even for `.ts` files (ESM requirement).
 - Import services and controllers as a namespace: `import * as BookmarkService from "@/api/bookmarks/bookmarks.service.js"`.
 - No barrel files (`index.ts` re-exports) inside `api/`.

@@ -116,8 +116,8 @@ request → authenticateUser → authorizeAdminOnly → controller → response
 
 General TypeScript types of the project: database models (`db.types.ts`), JWT payload (`auth.types.ts`), errors (`status.types.ts`) and the `req.user` extension for Express (`express.d.ts`).
 
-- Types for the external API responses will live in a `shared/` folder outside `backend/`, to be used by both apps (coming soon).
-- Zod schemas don't live here: they stay next to the code that uses them.
+- Schemas and types used by both apps (e.g. `emailSchema`, `passwordSchema`, external API responses) live in the root `shared/` folder, imported with `@shared/*`.
+- Backend-only Zod schemas don't live here: they stay next to the code that uses them (e.g. `envSchema` in `config/dotenv.ts`).
 
 ### `utils/`
 

@@ -1,6 +1,6 @@
 # Backend stack
 
-Explanation of the libraries and tools used by the backend. Exact versions are in `backend/package.json`.
+Explanation of the libraries and tools used by the backend. Exact versions are in `backend/package.json`, except `zod`, which lives in the root `package.json`.
 
 ## Runtime
 
@@ -9,6 +9,7 @@ Explanation of the libraries and tools used by the backend. Exact versions are i
 | Node.js (LTS) | Runs the server. |
 | TypeScript | Language of the project, with ESM modules (`"type": "module"`). |
 | `tsx` | Runs the `.ts` files directly in development, without building. |
+| `tsup` | Bundles the build into `dist/index.js`, resolving the `@/*` and `@shared/*` aliases. |
 
 ## Server
 
@@ -34,7 +35,7 @@ Explanation of the libraries and tools used by the backend. Exact versions are i
 |---|---|
 | `jose` | Signs and verifies JWT tokens (HS256). |
 | `bcryptjs` | Hashes passwords and refresh tokens. |
-| `zod` | Validates env vars and request bodies. |
+| `zod` | Validates env vars and request bodies. Installed at the repo root and shared with `shared/`. |
 
 ## Logging
 
@@ -47,7 +48,7 @@ Explanation of the libraries and tools used by the backend. Exact versions are i
 
 ```bash
 npm run dev           # start with watch mode (tsx)
-npm run build         # compile to dist/ (tsc)
+npm run build         # type-check (tsc --noEmit), then bundle to dist/index.js (tsup)
 npm run start         # run the compiled build
 npm run test          # run the tests (node --test)
 npm run db:generate   # create a migration
