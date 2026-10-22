@@ -14,12 +14,14 @@ the Tenrai anime scope is implemented so far.
 ## Repository layout
 
 This is **not** a monorepo/workspace — `backend/` and `frontend/` are two independent
-Node.js projects, each with its own `package.json` and lockfile.
+Node.js projects, each with its own `package.json` and lockfile. The root `package.json`
+only installs `zod`, the single copy used by `shared/` and the apps.
 
 ```
 my-geek-hub/
 ├── backend/    Express + TypeScript REST API (actively developed)
 ├── frontend/   Next.js app (scaffolded only — no features built yet)
+├── shared/     Zod schemas & types used by both apps (imported as `@shared/*`)
 ├── docs/       Hand-maintained architecture & convention docs (see below)
 └── .planning/  GSD workflow artifacts, incl. an automated codebase snapshot
 ```
@@ -65,6 +67,7 @@ Frontend docs (`docs/frontend/`) will be added once the frontend has real struct
 - Before writing backend code, check
   [docs/backend/convention.md](docs/backend/convention.md) for naming, error
   handling, and logging patterns already in use.
-- Don't introduce a monorepo tool (workspaces, Turborepo, etc.) or shared package
-  between `backend/` and `frontend/` without checking with the maintainer first —
-  the two apps are intentionally independent today.
+- Code shared by both apps goes in the root `shared/` folder (plain source, imported
+  via `@shared/*`) — only contracts the frontend also needs, never DB/Drizzle types.
+  Don't introduce a monorepo tool (workspaces, Turborepo, etc.) or turn `shared/` into
+  a package without checking with the maintainer first.
