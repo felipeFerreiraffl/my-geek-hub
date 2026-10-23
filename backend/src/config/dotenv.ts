@@ -9,6 +9,7 @@ const envSchema = z.object({
   JWT_REFRESH_SECRET: z.hex().min(64),
   JWT_ACCESS_EXP: z.string().regex(/^\d+[smhd]$/),
   JWT_REFRESH_EXP: z.string().regex(/^\d+[smhd]$/),
+  RAWG_API_KEY: z.string(),
 });
 
 const result = envSchema.safeParse(process.env);
