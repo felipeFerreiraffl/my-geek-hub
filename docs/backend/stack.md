@@ -73,6 +73,7 @@ Validated on startup by `src/config/dotenv.ts`. If any is invalid, the server do
 | `JWT_REFRESH_SECRET` | — | Hex string, 64+ chars. |
 | `JWT_ACCESS_EXP` | — | Access token lifetime (e.g. `15m`). |
 | `JWT_REFRESH_EXP` | — | Refresh token lifetime (e.g. `7d`). |
+| `RAWG_API_KEY` | — | RAWG API key, added to every request by the proxy. |
 
 ## Next reads
 

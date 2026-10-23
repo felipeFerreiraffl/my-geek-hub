@@ -8,8 +8,7 @@ Guidance for AI agents (and humans) working in this repository.
 bookmark works with a personal status (watching, completed, planned, paused, dropped),
 attach a personal rating/review, and (planned) export their data as JSON. Users
 search and discover works through a backend reverse proxy to the **Tenrai API**
-(anime/manga, MyAnimeList data, Jikan-compatible) and the **RAWG API** (games) — only
-the Tenrai anime and manga scopes are implemented so far.
+(anime/manga, MyAnimeList data, Jikan-compatible) and the **RAWG API** (games).
 
 ## Repository layout
 

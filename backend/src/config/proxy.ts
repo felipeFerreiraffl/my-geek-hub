@@ -1,5 +1,5 @@
-import { TENRAI_API_URL } from "@/constants/api.js";
-import { NODE_ENV } from "@/constants/dotenv.js";
+import { RAWG_API_URL, TENRAI_API_URL } from "@/constants/api.js";
+import { NODE_ENV, RAWG_API_KEY } from "@/constants/dotenv.js";
 
 type Probe = {
   name: string;
@@ -26,6 +26,14 @@ const probes: Probe[] = [
     path: "/manga/1",
     limits: "3 req/s ‧ 115 req/min (global)",
     sample: (body) => `${body.data.title} (mal_id ${body.data.mal_id})`,
+  },
+  {
+    name: "RAWG ‧ Games",
+    target: RAWG_API_URL,
+    routes: "/api/games/*",
+    path: `/games/3498?key=${RAWG_API_KEY}`,
+    limits: "4 req/s ‧ 640 req/day (global)",
+    sample: (body) => `${body.name} (id ${body.id})`,
   },
 ];
 

@@ -76,17 +76,21 @@ backend/src/api/proxy/
     │   └── animes.routes.ts   Routes mounted at /api/animes
     └── mangas/
         └── mangas.routes.ts   Routes mounted at /api/mangas
+└── rawg/
+    ├── rawg.proxy.ts          Proxy factory for the RAWG API (adds and hides the API key)
+    └── games/
+        └── games.routes.ts    Routes mounted at /api/games
 ```
 
 - Each external API is a **target** (e.g. `tenrai`), and each media type is a **scope** (e.g. `animes`).
-- Rate limits follow the official limits of each API (`config/rateLimit.ts`).
+- Rate limits follow the official limits of each API (`config/rateLimit.ts`). RAWG Free only has a monthly quota (20,000 requests), so it is split into a daily limit.
 - In development, the backend tests each external API on startup and prints the result (`config/proxy.ts`).
 
 | Target | Scope | Status |
 |---|---|---|
 | Tenrai (MyAnimeList data) | Animes | Implemented |
 | Tenrai (MyAnimeList data) | Mangas | Implemented |
-| RAWG | Games | Coming soon |
+| RAWG | Games | Implemented |
 
 ## Frontend
 

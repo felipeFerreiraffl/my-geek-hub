@@ -65,6 +65,10 @@ api/proxy/
     │   └── animes.routes.ts   Routes mounted at /api/animes
     └── mangas/
         └── mangas.routes.ts   Routes mounted at /api/mangas
+└── rawg/
+    ├── rawg.proxy.ts
+    └── games/
+        └── games.routes.ts    Routes mounted at /api/games
 ```
 
 - **Target** → the external API (e.g. `tenrai`). Its `<target>.proxy.ts` holds the shared setup for every scope.
