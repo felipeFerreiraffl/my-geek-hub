@@ -1,20 +1,14 @@
 import { middlewareFn } from "@/utils/serverFn.js";
 import { UserBodyReq } from "@/types/db.types.js";
 import { databaseLogger } from "@/utils/logger.js";
-import z from "zod";
-
-const emailSchema = z.email();
-const passwordSchema = z
-  .string()
-  .min(8)
-  .regex(/^(?=.*[A-Z])(?=.*[0-9]).{6,}$/);
+import { emailSchema, passwordSchema } from "@shared/schemas/user.schema.js";
 
 export const validateUser = middlewareFn<{}, {}, UserBodyReq>((req, _, next) => {
   const { email, password } = req.body;
   const validEmail = emailSchema.safeParse(email);
   const validPassword = passwordSchema.safeParse(password);
 
-  const passwordTooShort = validPassword.error?.message.includes("too_small");
+  const passwordTooShort = validPassword.error?.issues.some((issue) => issue.code === "too_small");
 
   if (!validEmail.success) {
     databaseLogger.error("Invalid email format", validEmail.error.message);

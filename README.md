@@ -4,14 +4,15 @@ A personal tracker for geek media — **anime**, **manga**, and **games**. Bookm
 the works you follow, track your status on each one (watching, completed,
 planned, paused, dropped), and attach a personal rating and review.
 
-Planned: exporting your bookmarks/ratings as JSON, and discovering new works
-through the [Jikan API](https://jikan.moe/) (anime/manga) and the
-[RAWG API](https://rawg.io/apidocs) (games).
+Works are discovered through a backend reverse proxy to the
+[Tenrai API](https://api.tenrai.org/v1) (anime/manga, MyAnimeList data) and the
+[RAWG API](https://rawg.io/apidocs) (games). Planned: exporting your
+bookmarks/ratings as JSON.
 
 ## Status
 
-- **Backend:** actively developed — authentication, users, and bookmarks are
-  implemented; ratings has a data layer but no API endpoints yet.
+- **Backend:** actively developed — authentication, users, bookmarks, ratings,
+  and the anime proxy (Tenrai) are implemented; mangas and games are coming soon.
 - **Frontend:** just the default Next.js scaffold, no features built yet.
 
 ## Architecture (short version)
@@ -24,7 +25,7 @@ frontend/ (Next.js)  ──HTTP/JSON──▶  backend/ (Express + TypeScript)  
 
 There's no monorepo tooling — `backend/` and `frontend/` each have their own
 `package.json` and are run separately. Full architecture details:
-[docs/general/architecture.md](docs/general/architecture.md).
+[docs/architecture.md](docs/architecture.md).
 
 ## Running locally
 
@@ -62,7 +63,7 @@ npm run dev       # starts Next.js on http://localhost:3000
 | | |
 |---|---|
 | [CLAUDE.md](CLAUDE.md) | Project guide for AI coding agents |
-| [docs/general/](docs/general/) | Project overview, cross-app architecture, repo-wide conventions |
-| [docs/backend/](docs/backend/) | Backend architecture, conventions, stack, database, API reference, testing |
+| [docs/](docs/) | Project overview, cross-app architecture, repo-wide conventions |
+| [docs/backend/](docs/backend/) | Backend architecture, conventions and stack |
 
 `docs/frontend/` will be added once the frontend has real structure to document.

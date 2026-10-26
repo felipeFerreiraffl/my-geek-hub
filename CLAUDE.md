@@ -6,20 +6,21 @@ Guidance for AI agents (and humans) working in this repository.
 
 **My Geek Hub** is a personal tracker for geek media — anime, manga, and games. Users
 bookmark works with a personal status (watching, completed, planned, paused, dropped),
-attach a personal rating/review, and (planned) export their data as JSON. Users will
-also be able to search and discover new works via the **Jikan API** (anime/manga,
-MyAnimeList data) and the **RAWG API** (games) — this integration is planned but not
-yet implemented in code.
+attach a personal rating/review, and (planned) export their data as JSON. Users
+search and discover works through a backend reverse proxy to the **Tenrai API**
+(anime/manga, MyAnimeList data, Jikan-compatible) and the **RAWG API** (games).
 
 ## Repository layout
 
 This is **not** a monorepo/workspace — `backend/` and `frontend/` are two independent
-Node.js projects, each with its own `package.json` and lockfile.
+Node.js projects, each with its own `package.json` and lockfile. The root `package.json`
+only installs `zod`, the single copy used by `shared/` and the apps.
 
 ```
 my-geek-hub/
 ├── backend/    Express + TypeScript REST API (actively developed)
 ├── frontend/   Next.js app (scaffolded only — no features built yet)
+├── shared/     Zod schemas & types used by both apps (imported as `@shared/*`)
 ├── docs/       Hand-maintained architecture & convention docs (see below)
 └── .planning/  GSD workflow artifacts, incl. an automated codebase snapshot
 ```
@@ -35,15 +36,14 @@ my-geek-hub/
 
 | Topic | Location |
 |---|---|
-| Project purpose & domain | [docs/general/overview.md](docs/general/overview.md) |
-| Cross-app architecture | [docs/general/architecture.md](docs/general/architecture.md) |
-| Repo-wide conventions (git, layout) | [docs/general/conventions.md](docs/general/conventions.md) |
-| Backend architecture & data flow | [docs/backend/architecture.md](docs/backend/architecture.md) |
-| Backend coding conventions | [docs/backend/conventions.md](docs/backend/conventions.md) |
-| Backend stack & env vars | [docs/backend/stack.md](docs/backend/stack.md) |
-| Database schema & migrations | [docs/backend/database.md](docs/backend/database.md) |
-| API routes | [docs/backend/api.md](docs/backend/api.md) |
-| Testing | [docs/backend/testing.md](docs/backend/testing.md) |
+| Project purpose & domain | [docs/overview.md](docs/overview.md) |
+| Cross-app architecture, proxy, AI tooling | [docs/architecture.md](docs/architecture.md) |
+| Repo-wide conventions (language, git, secrets) | [docs/convention.md](docs/convention.md) |
+| Backend folder structure & layering | [docs/backend/architecture.md](docs/backend/architecture.md) |
+| Backend naming, file creation & code patterns | [docs/backend/convention.md](docs/backend/convention.md) |
+| Backend stack, scripts & env vars | [docs/backend/stack.md](docs/backend/stack.md) |
+
+Frontend docs (`docs/frontend/`) will be added once the frontend has real structure.
 
 ## Tech stack at a glance
 
@@ -64,8 +64,9 @@ my-geek-hub/
 - **Imports:** use the `@/*` path alias over relative paths; ESM requires the `.js`
   extension even on `.ts` source files.
 - Before writing backend code, check
-  [docs/backend/conventions.md](docs/backend/conventions.md) for naming, error
+  [docs/backend/convention.md](docs/backend/convention.md) for naming, error
   handling, and logging patterns already in use.
-- Don't introduce a monorepo tool (workspaces, Turborepo, etc.) or shared package
-  between `backend/` and `frontend/` without checking with the maintainer first —
-  the two apps are intentionally independent today.
+- Code shared by both apps goes in the root `shared/` folder (plain source, imported
+  via `@shared/*`) — only contracts the frontend also needs, never DB/Drizzle types.
+  Don't introduce a monorepo tool (workspaces, Turborepo, etc.) or turn `shared/` into
+  a package without checking with the maintainer first.
