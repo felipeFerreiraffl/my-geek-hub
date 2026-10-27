@@ -8,10 +8,13 @@ import ratingRouter from "./api/ratings/ratings.routes.js";
 import animesRouter from "./api/proxy/tenrai/animes/animes.routes.js";
 import mangasRouter from "./api/proxy/tenrai/mangas/mangas.routes.js";
 import gamesRouter from "./api/proxy/rawg/games/games.routes.js";
+import cors from "cors";
+import { corsOptions } from "./config/cors.js";
 
 const app = express();
 
 app.use(helmet());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use("/api/users", userRouter);

@@ -17,6 +17,7 @@ Explanation of the libraries and tools used by the backend. Exact versions are i
 |---|---|
 | `express` (v5) | HTTP server and routing. |
 | `helmet` | Adds security headers to every response. |
+| `cors` | Allows browser requests only from the frontend origin (`config/cors.ts`). |
 | `express-rate-limit` | Limits the requests sent to the external APIs. |
 | `http-proxy-middleware` | Reverse proxy to the external APIs (Tenrai, RAWG). |
 
@@ -74,6 +75,7 @@ Validated on startup by `src/config/dotenv.ts`. If any is invalid, the server do
 | `JWT_ACCESS_EXP` | — | Access token lifetime (e.g. `15m`). |
 | `JWT_REFRESH_EXP` | — | Refresh token lifetime (e.g. `7d`). |
 | `RAWG_API_KEY` | — | RAWG API key, added to every request by the proxy. |
+| `MGH_CLIENT_URL` | — | Frontend URL allowed by CORS. Required in `prod`; outside it, `http://localhost:3000` is used. |
 
 ## Next reads
 
