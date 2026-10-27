@@ -14,6 +14,9 @@ export const tenraiProxy = (pathRewrite: Options["pathRewrite"] = {}, options?: 
         proxyReq.setHeader("Accept", "application/json");
       },
       proxyRes: (proxyRes) => {
+        for (const header of Object.keys(proxyRes.headers)) {
+          if (header.startsWith("access-control-")) delete proxyRes.headers[header];
+        }
         if (proxyRes.statusCode === 200) {
           proxyRes.headers["cache-control"] = "public, max-age=300";
         }

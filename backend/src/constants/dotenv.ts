@@ -9,3 +9,4 @@ export const JWT_REFRESH_SECRET = dotenv.JWT_REFRESH_SECRET;
 export const JWT_ACCESS_EXP = dotenv.JWT_ACCESS_EXP;
 export const JWT_REFRESH_EXP = dotenv.JWT_REFRESH_EXP;
 export const RAWG_API_KEY = dotenv.RAWG_API_KEY;
+export const MGH_CLIENT_URL = dotenv.MGH_CLIENT_URL;
