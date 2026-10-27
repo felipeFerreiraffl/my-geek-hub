@@ -106,7 +106,7 @@ After creating the router, mount it in `app.ts` under `/api/<scope>`.
 
 | File | Content |
 |---|---|
-| `app.ts` | Express setup: global middlewares (`helmet`, JSON), routes and the error handler. Exports `app`. |
+| `app.ts` | Express setup: global middlewares (`helmet`, CORS, JSON), routes and the error handler. Exports `app`. |
 | `index.ts` | Server startup: connects to the database, runs the proxy probes and opens the port. Prints the server info on the console. |
 
 A new route goes in `app.ts`. A new startup check (e.g. a new connection) goes in `index.ts`.

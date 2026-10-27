@@ -55,7 +55,7 @@ Other folders in `backend/src/`:
 
 | Folder | Content |
 |---|---|
-| `config/` | Database, env vars, proxy probes and rate limits. |
+| `config/` | Database, env vars, CORS, proxy probes and rate limits. |
 | `constants/` | Fixed values (API URLs, status messages, etc). |
 | `db/drizzle/` | Table schemas and relations (Drizzle ORM). |
 | `libs/` | JWT helpers. |
