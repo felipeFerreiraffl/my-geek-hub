@@ -10,7 +10,7 @@ General explanation of what My Geek Hub is and what it does.
 
 | Feature | Description | Status |
 |---|---|---|
-| Account | Sign up, sign in and session with JWT tokens. | Implemented |
+| Account | Sign up, sign in, sign out and session with JWT tokens. | Implemented |
 | Bookmarks | Save a work in the personal library with a status. | Implemented |
 | Ratings | Give a personal rating and review to a work. | Implemented |
 | Search | Find animes, mangas and games through the reverse proxy. | Implemented |
