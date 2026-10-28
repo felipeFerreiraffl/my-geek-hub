@@ -4,7 +4,6 @@ import { databaseLogger } from "@/utils/logger.js";
 import { emailSchema, passwordSchema, UserUpdateSchema } from "@shared/schemas/user.schema.js";
 import { z } from "zod";
 
-// Role is backend-only; who may change it is checked in the controllers
 const userUpdateReqSchema = UserUpdateSchema.extend({
   role: z.enum(["ADMIN", "USER"]).optional(),
 });

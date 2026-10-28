@@ -9,7 +9,6 @@ export const corsOptions: CorsOptions = {
   origin: ALLOWED_ORIGIN,
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  // Lets the browser send and store the refresh token cookie cross-origin
   credentials: true,
   maxAge: CORS_MAX_AGE,
 };

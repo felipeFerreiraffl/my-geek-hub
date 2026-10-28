@@ -10,7 +10,6 @@ export const db = drizzle(client, {
   schema: { ...schema, ...relations },
 });
 
-// Confirmação de conexão com o banco
 export const connectDb = async (): Promise<void> => {
   const start = Date.now();
 
