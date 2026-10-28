@@ -1,7 +1,12 @@
 import { middlewareFn } from "@/utils/serverFn.js";
-import { UserBodyReq } from "@/types/db.types.js";
+import { UserBodyReq, UserUpdateReq } from "@/types/db.types.js";
 import { databaseLogger } from "@/utils/logger.js";
-import { emailSchema, passwordSchema } from "@shared/schemas/user.schema.js";
+import { emailSchema, passwordSchema, UserUpdateSchema } from "@shared/schemas/user.schema.js";
+import { z } from "zod";
+
+const userUpdateReqSchema = UserUpdateSchema.extend({
+  role: z.enum(["ADMIN", "USER"]).optional(),
+});
 
 export const validateUser = middlewareFn<{}, {}, UserBodyReq>((req, _, next) => {
   const { email, password } = req.body;
@@ -25,5 +30,17 @@ export const validateUser = middlewareFn<{}, {}, UserBodyReq>((req, _, next) => 
     return next({ status: 400 });
   }
 
+  next();
+});
+
+export const validateUserUpdate = middlewareFn<{}, {}, UserUpdateReq>((req, _, next) => {
+  const result = userUpdateReqSchema.safeParse(req.body);
+
+  if (!result.success) {
+    databaseLogger.error("Invalid user update", result.error.message);
+    return next({ status: 400 });
+  }
+
+  req.body = result.data;
   next();
 });

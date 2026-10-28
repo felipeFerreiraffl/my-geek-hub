@@ -39,7 +39,7 @@ Full breakdown of each folder:
 - Services are imported as a namespace: `import * as UserService from "@/api/users/users.service.js"`.
 - No barrel files (`index.ts` re-exports) inside `api/`.
 - Controllers return `void` — respond via `res.json()` / `successRes()` or forward
-  errors with `next({ status, message })`; don't `throw` from a controller.
+  errors with `next({ status })` (plus an optional `code`); don't `throw` from a controller.
 - Async route handlers must be wrapped in `asyncFn(...)` (from `utils/serverFn.ts`)
   so rejected promises reach the error handler.
 - Logging goes through the prefixed loggers in `utils/logger.ts`

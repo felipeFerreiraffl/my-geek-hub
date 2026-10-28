@@ -18,6 +18,7 @@ Explanation of the libraries and tools used by the backend. Exact versions are i
 | `express` (v5) | HTTP server and routing. |
 | `helmet` | Adds security headers to every response. |
 | `cors` | Allows browser requests only from the frontend origin (`config/cors.ts`). |
+| `cookie-parser` | Reads the refresh token cookie into `req.cookies` (`config/cookie.ts`). |
 | `express-rate-limit` | Limits the requests sent to the external APIs. |
 | `http-proxy-middleware` | Reverse proxy to the external APIs (Tenrai, RAWG). |
 

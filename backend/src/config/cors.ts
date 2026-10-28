@@ -9,5 +9,6 @@ export const corsOptions: CorsOptions = {
   origin: ALLOWED_ORIGIN,
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
   maxAge: CORS_MAX_AGE,
 };

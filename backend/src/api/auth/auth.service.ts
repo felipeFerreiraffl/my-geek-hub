@@ -5,16 +5,10 @@ import { createAccessToken, createRefreshToken, verifyRefreshToken } from "@/lib
 import { RefreshToken, User } from "@/types/db.types.js";
 import { hashPassword } from "@/utils/serverFn.js";
 import bcrypt from "bcryptjs";
-import { eq } from "drizzle-orm";
+import { and, eq, lt } from "drizzle-orm";
+import { decodeJwt } from "jose";
 
-export const login = async (email: string, password: string) => {
-  const [user] = await db.select().from(usersTable).where(eq(usersTable.email, email));
-
-  if (!user) return null;
-
-  const matchedPassword = await bcrypt.compare(password, user.password);
-  if (!matchedPassword) return null;
-
+const issueTokens = async (user: Pick<User, "id" | "role">) => {
   const accessToken = await createAccessToken(user.id, user.role);
   const refreshToken = await createRefreshToken(user.id);
 
@@ -27,7 +21,40 @@ export const login = async (email: string, password: string) => {
     expiresAt: new Date(Date.now() + REFRESH_EXPIRED_TIME),
   };
 
+  // Drops this user's expired sessions while a new one is issued
+  await db
+    .delete(refreshTokensTable)
+    .where(
+      and(eq(refreshTokensTable.userId, user.id), lt(refreshTokensTable.expiresAt, new Date())),
+    );
   await db.insert(refreshTokensTable).values(refreshTokenVal);
+
+  return { accessToken, refreshToken };
+};
+
+const findStoredToken = async (userId: string, refreshToken: string) => {
+  const storedTokens = await db
+    .select()
+    .from(refreshTokensTable)
+    .where(eq(refreshTokensTable.userId, userId));
+
+  for (const stored of storedTokens) {
+    const matches = await bcrypt.compare(refreshToken, stored.tokenHash);
+    if (matches) return stored;
+  }
+
+  return null;
+};
+
+export const login = async (email: string, password: string) => {
+  const [user] = await db.select().from(usersTable).where(eq(usersTable.email, email));
+
+  if (!user) return null;
+
+  const matchedPassword = await bcrypt.compare(password, user.password);
+  if (!matchedPassword) return null;
+
+  const { accessToken, refreshToken } = await issueTokens(user);
 
   return { user, accessToken, refreshToken };
 };
@@ -52,19 +79,7 @@ export const register = async (email: string, password: string, username?: strin
 
   const [newUser] = await db.insert(usersTable).values(user).returning();
 
-  const accessToken = await createAccessToken(newUser.id, newUser.role);
-  const refreshToken = await createRefreshToken(newUser.id);
-
-  const tokenHash = await bcrypt.hash(refreshToken, 10);
-  const refreshTokenVal: RefreshToken = {
-    id: crypto.randomUUID(),
-    userId: newUser.id,
-    tokenHash,
-    createdAt: new Date(),
-    expiresAt: new Date(Date.now() + REFRESH_EXPIRED_TIME),
-  };
-
-  await db.insert(refreshTokensTable).values(refreshTokenVal);
+  const { accessToken, refreshToken } = await issueTokens(newUser);
 
   return { newUser, accessToken, refreshToken };
 };
@@ -73,19 +88,7 @@ export const refresh = async (refreshToken: string) => {
   const payload = await verifyRefreshToken(refreshToken);
   if (!payload || !payload.sub) return null;
 
-  const storedTokens = await db
-    .select()
-    .from(refreshTokensTable)
-    .where(eq(refreshTokensTable.userId, payload.sub));
-
-  let matchedToken: RefreshToken | null = null;
-  for (const stored of storedTokens) {
-    const matches = await bcrypt.compare(refreshToken, stored.tokenHash);
-    if (matches) {
-      matchedToken = stored;
-      break;
-    }
-  }
+  const matchedToken = await findStoredToken(payload.sub, refreshToken);
 
   if (!matchedToken) return null;
   if (matchedToken.expiresAt < new Date()) return null;
@@ -96,19 +99,25 @@ export const refresh = async (refreshToken: string) => {
 
   if (!user) return null;
 
-  const newAccessToken = await createAccessToken(user.id, user.role);
-  const newRefreshToken = await createRefreshToken(user.id);
-
-  const tokenHash = await bcrypt.hash(newRefreshToken, 10);
-  const refreshTokenVal: RefreshToken = {
-    id: crypto.randomUUID(),
-    userId: user.id,
-    tokenHash,
-    createdAt: new Date(),
-    expiresAt: new Date(Date.now() + REFRESH_EXPIRED_TIME),
-  };
-
-  await db.insert(refreshTokensTable).values(refreshTokenVal);
+  const { accessToken: newAccessToken, refreshToken: newRefreshToken } = await issueTokens(user);
 
   return { newAccessToken, newRefreshToken };
+};
+
+export const logout = async (refreshToken: string): Promise<void> => {
+  // Decoded, not verified: an expired token must still end its session, and only
+  // the holder of the exact token can match its stored hash
+  let userId: string | undefined;
+  try {
+    userId = decodeJwt(refreshToken).sub;
+  } catch {
+    return;
+  }
+
+  if (!userId) return;
+
+  const matchedToken = await findStoredToken(userId, refreshToken);
+  if (!matchedToken) return;
+
+  await db.delete(refreshTokensTable).where(eq(refreshTokensTable.id, matchedToken.id));
 };

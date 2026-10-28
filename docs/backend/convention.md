@@ -106,7 +106,7 @@ After creating the router, mount it in `app.ts` under `/api/<scope>`.
 
 | File | Content |
 |---|---|
-| `app.ts` | Express setup: global middlewares (`helmet`, CORS, JSON), routes and the error handler. Exports `app`. |
+| `app.ts` | Express setup: global middlewares (`helmet`, CORS, JSON, cookies), routes and the error handler. Exports `app`. |
 | `index.ts` | Server startup: connects to the database, runs the proxy probes and opens the port. Prints the server info on the console. |
 
 A new route goes in `app.ts`. A new startup check (e.g. a new connection) goes in `index.ts`.
@@ -124,8 +124,9 @@ A new route goes in `app.ts`. A new startup check (e.g. a new connection) goes i
 ### Controllers and errors
 
 - Wrap async handlers with `asyncFn()` and sync middlewares with `middlewareFn()` (`utils/serverFn.ts`). This way, rejected promises reach the error handler.
-- Controllers don't `throw`: they send errors with `next({ status })`, and `errorHandler` builds the response.
+- Controllers don't `throw`: they send errors with `next({ status })`, and `errorHandler` builds the response. Add `code` (from `ApiErrorCodeSchema`) when the client needs a machine-readable reason: `next({ status: 401, code: "TOKEN_EXPIRED" })`.
 - Successful responses use `successRes(res, status, data)`.
+- Both follow the envelope in `@shared/schemas/response.schema.js`: `{ success, status, message, data }` on success, `{ success, status, message, code? }` on error. Rate limiters forward their 429 to `errorHandler` too.
 
 ```ts
 if (!existingBookmark) {

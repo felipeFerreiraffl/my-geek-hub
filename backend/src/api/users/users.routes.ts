@@ -4,7 +4,7 @@ import {
   authorizeAdminOnly,
   authorizeSelfOrAdmin,
 } from "@/middlewares/auth.middleware.js";
-import { validateUser } from "@/middlewares/validation.middleware.js";
+import { validateUser, validateUserUpdate } from "@/middlewares/validation.middleware.js";
 import { Router } from "express";
 
 const userRouter = Router();
@@ -15,8 +15,14 @@ userRouter.get("/:id", authenticateUser, authorizeAdminOnly, UserController.getU
 
 userRouter.post("/", validateUser, authenticateUser, authorizeAdminOnly, UserController.createUser);
 
-userRouter.put("/me", authenticateUser, UserController.updateMe);
-userRouter.put("/:id", authenticateUser, authorizeSelfOrAdmin, UserController.updateUser);
+userRouter.put("/me", authenticateUser, validateUserUpdate, UserController.updateMe);
+userRouter.put(
+  "/:id",
+  authenticateUser,
+  authorizeSelfOrAdmin,
+  validateUserUpdate,
+  UserController.updateUser,
+);
 
 userRouter.delete("/:id", authenticateUser, authorizeSelfOrAdmin, UserController.deleteUser);
 userRouter.delete("/", authenticateUser, authorizeAdminOnly, UserController.deleteAllUsers);

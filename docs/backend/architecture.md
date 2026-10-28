@@ -8,7 +8,7 @@ Explanation of how the `backend/` folder is organized and why each part exists. 
 backend/
 ├── src/
 │   ├── api/            Features: CRUDs and reverse proxies
-│   ├── config/         Setup of database, env vars, CORS, rate limits and proxy probes
+│   ├── config/         Setup of database, env vars, CORS, cookies, rate limits and proxy probes
 │   ├── constants/      Fixed values used across the project
 │   ├── db/
 │   │   └── drizzle/
@@ -83,7 +83,8 @@ Files that **prepare** something before the app uses it.
 | File           | Content                                                            |
 | -------------- | ------------------------------------------------------------------ |
 | `db.ts`        | Database client and connection check on startup.                   |
-| `cors.ts`      | CORS options: allowed origin, methods, headers and preflight cache. |
+| `cors.ts`      | CORS options: allowed origin, methods, headers, credentials and preflight cache. |
+| `cookie.ts`    | Name and options of the httpOnly refresh token cookie (`mgh_refresh`). |
 | `dotenv.ts`    | Validates the env vars with Zod. The app stops if any is invalid.  |
 | `rateLimit.ts` | Rate limiters, following the official limits of each external API. |
 | `proxy.ts`     | Probes that test each external API on startup (dev only).          |
@@ -141,7 +142,7 @@ Small and generic functions, not tied to a feature.
 
 The app is split in two files on purpose:
 
-- `app.ts` → **what** the server does: Express setup (`helmet`, CORS, JSON), routes and the error handler.
+- `app.ts` → **what** the server does: Express setup (`helmet`, CORS, JSON, cookies), routes and the error handler.
 - `index.ts` → **how** it starts: connects to the database, runs the proxy probes and opens the port, printing the server info on the console.
 
 This way, `app` can be imported without starting a server (e.g. in tests).

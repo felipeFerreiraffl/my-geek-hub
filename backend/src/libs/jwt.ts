@@ -5,7 +5,8 @@ import {
   JWT_REFRESH_SECRET,
 } from "@/constants/dotenv.js";
 import { JWTAuthPayload } from "@/types/auth.types.js";
-import { jwtVerify, SignJWT } from "jose";
+import { ApiErrorCode } from "@shared/schemas/response.schema.js";
+import { errors, jwtVerify, SignJWT } from "jose";
 
 interface SignTokenProps {
   payload: JWTAuthPayload;
@@ -86,3 +87,9 @@ export const verifyAccessToken = (token: string) => {
 export const verifyRefreshToken = (token: string) => {
   return verifyToken({ token, secret: refreshSecret });
 };
+
+// Any verification failure other than expiration (malformed, bad signature, wrong alg...) is TOKEN_INVALID
+export const toAuthError = (err: unknown): { status: number; code: ApiErrorCode } =>
+  err instanceof errors.JWTExpired
+    ? { status: 401, code: "TOKEN_EXPIRED" }
+    : { status: 401, code: "TOKEN_INVALID" };
