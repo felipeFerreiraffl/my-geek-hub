@@ -1,5 +1,6 @@
 import { STATUS_MESSAGE } from "@/constants/status.js";
 import { ErrorType } from "@/types/status.types.js";
+import { ApiError } from "@shared/schemas/response.schema.js";
 import { NextFunction, Request, Response } from "express";
 
 export const errorHandler = (
@@ -9,11 +10,12 @@ export const errorHandler = (
   next: NextFunction,
 ): void => {
   const status = err.status ?? 500;
-  const message = STATUS_MESSAGE[status] ?? "UNKNOWN ERROR";
-
-  res.status(status).json({
+  const body: ApiError = {
     success: false,
     status,
-    message,
-  });
+    message: STATUS_MESSAGE[status] ?? "UNKNOWN ERROR",
+    ...(err.code && { code: err.code }),
+  };
+
+  res.status(status).json(body);
 };

@@ -1,7 +1,12 @@
 import rateLimit, { Options } from "express-rate-limit";
 
+// Forwards 429s to errorHandler so they share the standard error envelope
+const handler: Options["handler"] = (_req, _res, next, options) =>
+  next({ status: options.statusCode });
+
 const tenraiLimitOptions: Partial<Options> = {
   keyGenerator: () => "tenrai",
+  handler,
   standardHeaders: "draft-8",
   legacyHeaders: false,
 };
@@ -22,6 +27,7 @@ export const tenraiPerMinuteLimit = rateLimit({
 
 const rawgLimitOptions: Partial<Options> = {
   keyGenerator: () => "rawg",
+  handler,
   standardHeaders: "draft-8",
   legacyHeaders: false,
 };

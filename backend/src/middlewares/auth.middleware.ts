@@ -25,12 +25,12 @@ export const authenticateUser = asyncFn(async (req, _, next) => {
   } catch (err: unknown) {
     if (err instanceof errors.JWTExpired) {
       authLogger.error("JWT Token expired", err.stack);
-      return next({ status: 401, message: "TOKEN_EXPIRED" });
+      return next({ status: 401, code: "TOKEN_EXPIRED" });
     }
 
     if (err instanceof errors.JWTInvalid) {
       authLogger.error("JWT token is invalid", err.stack);
-      return next({ status: 401, message: "TOKEN_INVALID" });
+      return next({ status: 401, code: "TOKEN_INVALID" });
     }
 
     return next({ status: 401 });
