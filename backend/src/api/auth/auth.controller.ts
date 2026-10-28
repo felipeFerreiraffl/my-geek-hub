@@ -1,8 +1,10 @@
 import * as AuthService from "./auth.service.js";
+import { toAuthError } from "@/libs/jwt.js";
 import { RefreshTokenBodyReq, UserBodyReq } from "@/types/db.types.js";
 import { authLogger } from "@/utils/logger.js";
 import { successRes } from "@/utils/messages.js";
 import { asyncFn } from "@/utils/serverFn.js";
+import { errors } from "jose";
 
 export const signIn = asyncFn<{}, {}, UserBodyReq>(async (req, res, next) => {
   const { email, password } = req.body;
@@ -62,10 +64,24 @@ export const refreshSign = asyncFn<{}, {}, RefreshTokenBodyReq>(async (req, res,
     return next({ status: 400 });
   }
 
-  const result = await AuthService.refresh(tokenHash);
+  let result: Awaited<ReturnType<typeof AuthService.refresh>>;
+  try {
+    result = await AuthService.refresh(tokenHash);
+  } catch (err: unknown) {
+    // Only JWT verification failures are 401; anything else (e.g. DB) stays a 500
+    if (!(err instanceof errors.JOSEError)) {
+      authLogger.error("Refresh failed", err);
+      return next(err);
+    }
+
+    const authError = toAuthError(err);
+    authLogger.error("Refresh token rejected", authError.code);
+    return next(authError);
+  }
+
   if (!result) {
-    authLogger.error("Invalid or expired refresh token");
-    return next({ status: 401 });
+    authLogger.error("Refresh token not found or already used");
+    return next({ status: 401, code: "TOKEN_INVALID" });
   }
 
   authLogger.info("Token refreshed", JSON.stringify(result));
