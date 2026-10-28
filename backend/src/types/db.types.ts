@@ -31,10 +31,6 @@ export interface UserParams {
   id: string;
 }
 
-export interface RefreshTokenBodyReq {
-  tokenHash: string;
-}
-
 export type BookmarkMediaType = "ANIME" | "MANGA" | "GAME";
 
 export type BookmarkStatus = "IN_PROGRESS" | "COMPLETED" | "PLANNED" | "PAUSED" | "DROPPED";
