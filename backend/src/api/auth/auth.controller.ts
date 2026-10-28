@@ -93,3 +93,17 @@ export const refreshSign = asyncFn(async (req, res, next) => {
     accessToken: result.newAccessToken,
   });
 });
+
+export const signOut = asyncFn(async (req, res, _) => {
+  const refreshToken: string | undefined = req.cookies[REFRESH_COOKIE_NAME];
+
+  if (refreshToken) {
+    await AuthService.logout(refreshToken);
+  }
+
+  // Always succeeds: without a valid cookie there is no session left to end
+  res.clearCookie(REFRESH_COOKIE_NAME, refreshCookieOptions);
+
+  authLogger.info("User signed out");
+  successRes(res, 200, null);
+});
