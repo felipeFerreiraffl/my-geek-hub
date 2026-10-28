@@ -93,7 +93,7 @@ export const createUser = asyncFn<{}, {}, UserBodyReq>(async (req, res, next) =>
 
 export const updateUser = asyncFn<UserParams, {}, UserUpdateReq>(async (req, res, next) => {
   const { id } = req.params;
-  const { password, role, ...otherFields } = req.body as UserUpdateReq & Pick<User, "role">;
+  const { password, role, ...otherFields } = req.body;
   const isAdmin = req.user?.role === "ADMIN";
 
   if (!id) {
@@ -110,6 +110,14 @@ export const updateUser = asyncFn<UserParams, {}, UserUpdateReq>(async (req, res
   if (!existingUser) {
     databaseLogger.error("User not found");
     return next({ status: 404 });
+  }
+
+  if (otherFields.email) {
+    const emailOwner = await UserService.findUserByEmail(otherFields.email);
+    if (emailOwner && emailOwner.id !== id) {
+      databaseLogger.error("Email already in use");
+      return next({ status: 409 });
+    }
   }
 
   const fieldsToUpdate: Partial<User> = {
@@ -141,7 +149,7 @@ export const updateUser = asyncFn<UserParams, {}, UserUpdateReq>(async (req, res
   successRes(res, 200, userWithoutPassword);
 });
 
-export const updateMe = asyncFn<{}, {}, UserBodyReq>(async (req, res, next) => {
+export const updateMe = asyncFn<{}, {}, UserUpdateReq>(async (req, res, next) => {
   const id = req.user?.id;
   const { password, role, ...otherFields } = req.body;
 
@@ -153,6 +161,14 @@ export const updateMe = asyncFn<{}, {}, UserBodyReq>(async (req, res, next) => {
   if (role) {
     databaseLogger.error("Cannot change your own role");
     return next({ status: 403 });
+  }
+
+  if (otherFields.email) {
+    const emailOwner = await UserService.findUserByEmail(otherFields.email);
+    if (emailOwner && emailOwner.id !== id) {
+      databaseLogger.error("Email already in use");
+      return next({ status: 409 });
+    }
   }
 
   const fieldsToUpdate: Partial<User> = {

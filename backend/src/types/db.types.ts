@@ -1,4 +1,5 @@
 import { bookmarks, ratings, refreshTokens, users } from "@/db/drizzle/index.js";
+import { UserUpdate } from "@shared/schemas/user.schema.js";
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 export type User = InferSelectModel<typeof users>;
@@ -21,11 +22,9 @@ export interface UserBodyReq {
   role?: "ADMIN" | "USER";
 }
 
-export interface UserUpdateReq {
-  username?: string;
-  email?: string;
-  password?: string;
-}
+export type UserUpdateReq = UserUpdate & {
+  role?: "ADMIN" | "USER";
+};
 
 export interface UserParams {
   id: string;
