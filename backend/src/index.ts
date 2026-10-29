@@ -9,7 +9,7 @@ const bootstrap = async (): Promise<void> => {
 
   if (NODE_ENV !== "prod") {
     app.listen(PORT, () => {
-      console.group(`\n [MYGEEKHUB]`);
+      console.group(`\n [MY GEEK HUB]`);
       console.log(`• Environment →   ${NODE_ENV}`);
       console.log(`• Port        →   ${PORT}`);
       console.log(`• PID         →   ${process.pid}`);
